@@ -5,20 +5,26 @@ export function isUuid(value: unknown): value is string {
   );
 }
 
+// Format rupiah Indonesia: titik = pemisah ribuan (opsional), koma = desimal
+// (opsional, 1-2 digit). Format ambigu seperti "1.5", "50.00", atau "1,500"
+// sengaja ditolak supaya tidak ada nominal yang tersimpan salah secara diam-diam.
+const plainAmount = /^(\d+)(?:,(\d{1,2}))?$/; // 15000 | 15000,5
+const groupedAmount = /^([1-9]\d{0,2}(?:\.\d{3})+)(?:,(\d{1,2}))?$/; // 15.000 | 1.500.000,50
+
 export function normalizeAmount(value: unknown): string | null {
   if (typeof value !== "string") {
     return null;
   }
 
   const input = value.trim();
+  const match = plainAmount.exec(input) ?? groupedAmount.exec(input);
 
-  if (!/^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(input)) {
+  if (!match) {
     return null;
   }
 
-  const [rawInteger, rawFraction = ""] = input.split(",");
-  const integer = rawInteger.replace(/\./g, "").replace(/^0+/, "") || "0";
-  const fraction = rawFraction.padEnd(2, "0");
+  const integer = match[1].replace(/\./g, "").replace(/^0+/, "") || "0";
+  const fraction = (match[2] ?? "").padEnd(2, "0");
 
   // numeric(14,2) permits at most 12 digits before the decimal separator.
   if (integer.length > 12 || (integer === "0" && fraction === "00")) {
@@ -68,7 +74,7 @@ export function validateTransaction(
 
   if (!amount) {
     return {
-      error: "Nominal tidak valid. Contoh: 15000, 15.000, atau 15000,50 (titik untuk ribuan, koma untuk desimal).",
+      error: "Nominal tidak valid. Contoh: 15000, 15.000, atau 15.000,50 (titik untuk ribuan, koma untuk desimal, maksimal 2 angka desimal). Nominal harus lebih dari nol dan maksimal 999.999.999.999,99.",
     };
   }
 

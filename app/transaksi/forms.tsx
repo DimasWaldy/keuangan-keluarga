@@ -66,7 +66,7 @@ export function AddTransactionForm({
           type="text"
           inputMode="decimal"
           required
-          placeholder="15000, 15.000, atau 15000,50"
+          placeholder="50.000 atau 50.000,50"
           aria-describedby="transaction-amount-help"
           className={fieldClass}
         />
@@ -74,7 +74,7 @@ export function AddTransactionForm({
           id="transaction-amount-help"
           className="text-sm text-zinc-600 dark:text-zinc-400"
         >
-          Titik untuk ribuan, koma untuk desimal. Contoh: 15.000 atau 15000,50.
+          Titik untuk ribuan, koma untuk desimal. Contoh: 15000, 15.000, atau 15.000,50.
         </p>
       </div>
       <div className="space-y-2">
