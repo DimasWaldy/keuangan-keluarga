@@ -18,14 +18,14 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 
 ## Fase dan status
 
-| Fase                      | Isi                                                        | Status                                                                           |
-| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                                           |
-| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Kode jadi, tes lokal lolos. Sisa: perbaikan format nominal, tes dua akun, deploy |
-| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | SQL siap (`db/002`). UI belum                                                    |
-| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Belum                                                                            |
-| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Belum                                                                            |
-| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                                            |
+| Fase                      | Isi                                                        | Status                                                |
+| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
+| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                |
+| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel      |
+| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual |
+| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Belum                                                 |
+| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Belum                                                 |
+| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                 |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
@@ -49,8 +49,8 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 **Fase 2**
 
 - [x] `db/002_ringkasan_bulanan.sql` dijalankan di Supabase; `anon` tidak punya hak execute
-- [ ] `/dashboard?bulan=YYYY-MM` menampilkan angka yang sama dengan hitungan manual
-- [ ] Bulan tanpa transaksi menampilkan keadaan kosong, bukan error
+- [x] `/dashboard?bulan=YYYY-MM` menampilkan angka yang sama dengan hitungan manual
+- [x] Bulan tanpa transaksi menampilkan keadaan kosong, bukan error
 
 ## Rencana fase berikutnya
 
