@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
@@ -42,6 +43,20 @@ async function Dashboard() {
     <div className="w-full max-w-sm space-y-6">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
       <p className="break-all">{user.email}</p>
+      <nav aria-label="Menu utama" className="flex flex-wrap gap-4">
+        <Link
+          href="/kategori"
+          className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+        >
+          Kategori
+        </Link>
+        <Link
+          href="/transaksi"
+          className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+        >
+          Transaksi
+        </Link>
+      </nav>
       <form action={signOut}>
         <button
           type="submit"
