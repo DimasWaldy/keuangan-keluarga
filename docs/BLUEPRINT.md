@@ -6,26 +6,26 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 
 ## Keputusan
 
-| Aspek | Keputusan | Alasan |
-| --- | --- | --- |
+| Aspek    | Keputusan                                                                                | Alasan                                                             |
+| -------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind. `app/` dan `utils/` di root, tanpa `src/` | Stack yang dicari lowongan; berbeda dari proyek Laravel sebelumnya |
-| Backend | Supabase: Postgres, Auth (Google OAuth), Row Level Security | Login dan isolasi data tidak dibuat dari nol |
-| Hosting | Vercel (gratis), URL `*.vercel.app` | Domain sendiri bisa menyusul |
-| OCR | Gemini Vision, dipanggil dari server | API key tidak pernah sampai ke browser |
-| Uang | `numeric(14,2)`, dikirim sebagai string desimal | Menghindari galat pembulatan float |
-| Tanggal | Zona Asia/Jakarta; aplikasi selalu mengirim `occurred_on` | Server Vercel dan database memakai UTC |
-| Data | Terpisah per akun. Berbagi data keluarga ditunda | Perlu model `households` tersendiri |
+| Backend  | Supabase: Postgres, Auth (Google OAuth), Row Level Security                              | Login dan isolasi data tidak dibuat dari nol                       |
+| Hosting  | Vercel (gratis), URL `*.vercel.app`                                                      | Domain sendiri bisa menyusul                                       |
+| OCR      | Gemini Vision, dipanggil dari server                                                     | API key tidak pernah sampai ke browser                             |
+| Uang     | `numeric(14,2)`, dikirim sebagai string desimal                                          | Menghindari galat pembulatan float                                 |
+| Tanggal  | Zona Asia/Jakarta; aplikasi selalu mengirim `occurred_on`                                | Server Vercel dan database memakai UTC                             |
+| Data     | Terpisah per akun. Berbagi data keluarga ditunda                                         | Perlu model `households` tersendiri                                |
 
 ## Fase dan status
 
-| Fase | Isi | Status |
-| --- | --- | --- |
-| 0. Fondasi | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel |
-| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS | Kode jadi, tes lokal lolos. Sisa: perbaikan format nominal, tes dua akun, deploy |
-| 2. Ringkasan bulanan | Total pemasukan, pengeluaran, dan selisih per bulan | SQL siap (`db/002`). UI belum |
-| 3. Mode demo | Tombol "Coba Demo" tanpa login | Belum |
-| 4. OCR | Screenshot transaksi, konfirmasi, simpan | Belum |
-| 5. Poles | README, ERD, diagram, catatan keamanan, bukti tes | Belum |
+| Fase                      | Isi                                                        | Status                                                                           |
+| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                                           |
+| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Kode jadi, tes lokal lolos. Sisa: perbaikan format nominal, tes dua akun, deploy |
+| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | SQL siap (`db/002`). UI belum                                                    |
+| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Belum                                                                            |
+| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Belum                                                                            |
+| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                                            |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
@@ -34,19 +34,21 @@ Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum
 Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 
 **Fase 1**
+
 - [x] Tambah kategori: tampil di kelompoknya, `user_id` terisi otomatis di database
 - [x] Hapus kategori yang dipakai transaksi: muncul "Kategori masih dipakai transaksi"
 - [x] Tanggal 31 Februari ditolak
-- [ ] Nominal `15000`, `15.000`, `1.500.000`, `15.000,50` tersimpan benar; `1.5`, `50.00`, `1,500.00` ditolak dengan pesan jelas
-- [ ] Kategori duplikat: muncul "Kategori itu sudah ada"
-- [ ] Transaksi dibuat antara 00:00 dan 07:00 WIB (diuji di URL Vercel) tersimpan dengan tanggal WIB hari itu
+- [x] Nominal `15000`, `15.000`, `1.500.000`, `15.000,50` tersimpan benar; `1.5`, `50.00`, `1,500.00` ditolak dengan pesan jelas
+- [x] Kategori duplikat: muncul "Kategori itu sudah ada"
+- [x] Transaksi dibuat antara 00:00 dan 07:00 WIB (diuji di URL Vercel) tersimpan dengan tanggal WIB hari itu
 - [ ] Pagination: tepat 20 transaksi tanpa halaman 2; 21 transaksi, halaman 2 berisi 1
-- [ ] Dua akun: tiap akun hanya melihat datanya sendiri; kategori akun lain tidak muncul di dropdown
+- [x] Dua akun: tiap akun hanya melihat datanya sendiri; kategori akun lain tidak muncul di dropdown
 - [ ] Pemalsuan: mengubah `category_id` di form menjadi milik akun lain ditolak
 - [ ] `/kategori` dan `/transaksi` tanpa login diarahkan ke `/login`
 
 **Fase 2**
-- [ ] `db/002_ringkasan_bulanan.sql` dijalankan di Supabase; `anon` tidak punya hak execute
+
+- [x] `db/002_ringkasan_bulanan.sql` dijalankan di Supabase; `anon` tidak punya hak execute
 - [ ] `/dashboard?bulan=YYYY-MM` menampilkan angka yang sama dengan hitungan manual
 - [ ] Bulan tanpa transaksi menampilkan keadaan kosong, bukan error
 
