@@ -41,7 +41,7 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Nominal `15000`, `15.000`, `1.500.000`, `15.000,50` tersimpan benar; `1.5`, `50.00`, `1,500.00` ditolak dengan pesan jelas
 - [x] Kategori duplikat: muncul "Kategori itu sudah ada"
 - [x] Transaksi dibuat antara 00:00 dan 07:00 WIB (diuji di URL Vercel) tersimpan dengan tanggal WIB hari itu
-- [ ] Pagination: tepat 20 transaksi tanpa halaman 2; 21 transaksi, halaman 2 berisi 1
+- [x] Pagination: tepat 20 transaksi tanpa halaman 2; 21 transaksi, halaman 2 berisi 1
 - [x] Dua akun: tiap akun hanya melihat datanya sendiri; kategori akun lain tidak muncul di dropdown
 - [ ] Pemalsuan: mengubah `category_id` di form menjadi milik akun lain ditolak
 - [x] `/kategori` dan `/transaksi` tanpa login diarahkan ke `/login`
