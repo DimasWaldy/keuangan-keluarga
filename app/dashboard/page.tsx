@@ -134,7 +134,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     <div className="w-full max-w-2xl space-y-8">
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="break-all">{user.email}</p>
+        <p className="break-all">{user.email ? user.email : "Mode demo"}</p>
         <nav aria-label="Menu utama" className="flex flex-wrap gap-4">
           <Link
             href="/kategori"
