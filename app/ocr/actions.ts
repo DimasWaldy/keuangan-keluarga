@@ -61,7 +61,7 @@ export async function extractTransactions(
   let quota: OcrQuota;
 
   try {
-    const { data, error } = await supabase.rpc("ocr_check_and_log");
+    const { data, error } = await supabase.rpc("ocr_check");
     const firstRow = Array.isArray(data) ? data[0] : null;
 
     if (error || !isOcrQuota(firstRow)) {
@@ -100,6 +100,16 @@ export async function extractTransactions(
       "Tidak ada transaksi yang bisa dibaca dari gambar ini.",
       raw,
     );
+  }
+
+  try {
+    const { error } = await supabase.rpc("ocr_log");
+
+    if (error) {
+      console.warn("[ocr] gagal mencatat log", error);
+    }
+  } catch (error) {
+    console.warn("[ocr] gagal mencatat log", error);
   }
 
   return { error: null, transactions, raw };

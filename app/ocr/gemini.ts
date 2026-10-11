@@ -84,18 +84,21 @@ export async function extractTransactionsFromImage(
 
   try {
     response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
         body: JSON.stringify({
           contents: [
             {
               parts: [
                 { text: prompt },
                 {
-                  inline_data: {
-                    mime_type: mimeType,
+                  inlineData: {
+                    mimeType,
                     data: imageBase64,
                   },
                 },
@@ -114,6 +117,8 @@ export async function extractTransactionsFromImage(
   }
 
   if (!response.ok) {
+    const body = await response.text();
+    console.error("[gemini] HTTP", response.status, "body:", body.slice(0, 500));
     return { ok: false, error: `Status HTTP ${response.status}.` };
   }
 
