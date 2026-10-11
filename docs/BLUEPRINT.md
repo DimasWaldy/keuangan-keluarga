@@ -19,11 +19,11 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 ## Fase dan status
 
 | Fase                      | Isi                                                        | Status                                                |
-| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- | --- | --- |
+| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
 | 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                |
 | 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel      |
 | 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual |
-| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel            |     |     |
+| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel            |
 | 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Belum                                                 |
 | 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                 |
 
