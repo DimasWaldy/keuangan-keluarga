@@ -10,3 +10,8 @@ export type OcrActionState = {
   transactions: ExtractedTransaction[] | null;
   raw: string | null;
 };
+
+export type SaveOcrState = {
+  error: string | null;
+  successCount: number | null;
+};

@@ -1,10 +1,16 @@
 "use server";
 
 import { Buffer } from "node:buffer";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import {
+  isUuid,
+  isValidDate,
+  normalizeAmount,
+} from "@/app/transaksi/validation";
 import { createClient } from "@/utils/supabase/server";
 import { extractTransactionsFromImage } from "./gemini";
-import type { OcrActionState } from "./types";
+import type { OcrActionState, SaveOcrState } from "./types";
 import { parseExtractedTransactions } from "./validation";
 
 const maxImageSize = 2 * 1024 * 1024;
@@ -113,4 +119,100 @@ export async function extractTransactions(
   }
 
   return { error: null, transactions, raw };
+}
+
+export async function saveExtractedTransactions(
+  _previousState: SaveOcrState,
+  formData: FormData,
+): Promise<SaveOcrState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    redirect("/login");
+  }
+
+  const payload = formData.get("payload");
+  let items: unknown;
+
+  try {
+    if (typeof payload !== "string") {
+      return { error: "Data transaksi tidak valid.", successCount: null };
+    }
+
+    items = JSON.parse(payload);
+  } catch {
+    return { error: "Data transaksi tidak valid.", successCount: null };
+  }
+
+  if (!Array.isArray(items) || items.length === 0 || items.length > 20) {
+    return { error: "Data transaksi tidak valid.", successCount: null };
+  }
+
+  const invalidItem: SaveOcrState = {
+    error: "Ada transaksi yang tidak valid. Periksa lagi.",
+    successCount: null,
+  };
+  const rows: {
+    category_id: string;
+    amount: string;
+    occurred_on: string;
+    note: string | null;
+  }[] = [];
+
+  try {
+    for (const item of items) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        return invalidItem;
+      }
+
+      const transaction = item as Record<string, unknown>;
+      const categoryId = transaction.category_id;
+      const amount = normalizeAmount(transaction.amount);
+      const occurredOn = transaction.occurred_on;
+      const rawNote = transaction.note;
+
+      if (
+        !isUuid(categoryId) ||
+        !amount ||
+        !isValidDate(occurredOn) ||
+        (rawNote !== null && typeof rawNote !== "string")
+      ) {
+        return invalidItem;
+      }
+
+      const note = typeof rawNote === "string" ? rawNote.trim() || null : null;
+
+      if (note && note.length > 200) {
+        return invalidItem;
+      }
+
+      const { data: category, error: categoryError } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("id", categoryId)
+        .maybeSingle();
+
+      if (categoryError || !category) {
+        return invalidItem;
+      }
+
+      rows.push({ category_id: categoryId, amount, occurred_on: occurredOn, note });
+    }
+
+    const { error } = await supabase.from("transactions").insert(rows);
+
+    if (error) {
+      return { error: "Gagal menyimpan transaksi. Coba lagi.", successCount: null };
+    }
+  } catch {
+    return { error: "Gagal menyimpan transaksi. Coba lagi.", successCount: null };
+  }
+
+  revalidatePath("/transaksi");
+  revalidatePath("/dashboard");
+  return { error: null, successCount: rows.length };
 }

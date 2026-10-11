@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import type { TransactionCategory } from "@/app/transaksi/types";
 import { extractTransactions } from "./actions";
+import { ConfirmForm } from "./confirm-form";
 import type { OcrActionState } from "./types";
 
 const initialState: OcrActionState = {
@@ -10,7 +12,7 @@ const initialState: OcrActionState = {
   raw: null,
 };
 
-export function OcrForm() {
+export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
   const [state, formAction, pending] = useActionState(
     extractTransactions,
     initialState,
@@ -48,14 +50,12 @@ export function OcrForm() {
         </p>
       )}
 
-      {state.transactions && state.transactions.length > 0 && (
+      {!pending && state.transactions && state.transactions.length > 0 && (
         <section aria-labelledby="ocr-result-heading" className="space-y-3">
           <p id="ocr-result-heading" className="font-medium text-green-700 dark:text-green-400">
             Ditemukan {state.transactions.length} transaksi.
           </p>
-          <pre className="overflow-x-auto rounded-lg border border-black/10 bg-black/5 p-4 text-sm dark:border-white/10 dark:bg-white/5">
-            {JSON.stringify(state.transactions, null, 2)}
-          </pre>
+          <ConfirmForm transactions={state.transactions} categories={categories} />
         </section>
       )}
 
@@ -68,7 +68,7 @@ export function OcrForm() {
       {state.raw && (
         <details className="space-y-3 rounded-lg border border-black/10 p-4 dark:border-white/10">
           <summary className="cursor-pointer font-medium">
-            Respons asli Gemini
+            Respons asli Gemini (untuk debugging)
           </summary>
           <pre className="overflow-x-auto whitespace-pre-wrap break-words text-sm">
             {state.raw}

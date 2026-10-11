@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import type { TransactionCategory } from "@/app/transaksi/types";
 import { createClient } from "@/utils/supabase/server";
 import { OcrForm } from "./ocr-form";
 
@@ -16,6 +17,22 @@ async function Ocr() {
 
   if (authError || !user) {
     redirect("/login");
+  }
+
+  let categories: TransactionCategory[] = [];
+  let categoryError = false;
+
+  try {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id,name,type")
+      .order("name", { ascending: true })
+      .overrideTypes<TransactionCategory[], { merge: false }>();
+
+    categoryError = Boolean(error);
+    categories = error ? [] : (data ?? []);
+  } catch {
+    categoryError = true;
   }
 
   return (
@@ -34,7 +51,12 @@ async function Ocr() {
         </p>
       </div>
 
-      <OcrForm />
+      {categoryError && (
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          Gagal memuat kategori. Silakan coba lagi.
+        </p>
+      )}
+      <OcrForm categories={categories} />
     </div>
   );
 }
