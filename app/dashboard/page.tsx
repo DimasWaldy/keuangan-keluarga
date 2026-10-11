@@ -148,6 +148,12 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           >
             Transaksi
           </Link>
+          <Link
+            href="/ocr"
+            className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+          >
+            OCR
+          </Link>
         </nav>
       </div>
 

@@ -11,6 +11,7 @@ export const config = {
     "/dashboard/:path*",
     "/kategori/:path*",
     "/transaksi/:path*",
+    "/ocr/:path*",
     "/auth/callback",
   ],
 };
