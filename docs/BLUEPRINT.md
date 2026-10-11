@@ -18,14 +18,14 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 
 ## Fase dan status
 
-| Fase                      | Isi                                                        | Status                                                |
-| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
-| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                |
-| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel      |
-| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual |
-| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel            |
-| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Belum                                                 |
-| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                 |
+| Fase                      | Isi                                                        | Status                                                               |
+| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                               |
+| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel                     |
+| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual                |
+| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel                           |
+| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | MVP selesai: alur end-to-end jalan. Sisa: batasi demo, retry, README |
+| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                                |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
@@ -59,6 +59,19 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Data contoh muncul: 3 kategori (Gaji, Makan, Transportasi) dan 6 transaksi
 - [x] Klik "Coba Demo" dua kali di jendela incognito berbeda menghasilkan akun terpisah
 - [x] Akun anonim tidak bisa melihat data akun Google/anonim lain
+
+**Fase 4**
+
+- [x] Upload gambar JPG/PNG/WebP maks 2 MB ke /ocr
+- [x] Gemini mengekstrak transaksi dan mengembalikan JSON terstruktur
+- [x] Hasil tampil sebagai form yang bisa diedit (nominal, tanggal, kategori, catatan)
+- [x] Kategori auto-select berdasarkan category_hint dari Gemini
+- [x] Checkbox per transaksi; yang tidak dicentang tidak disimpan
+- [x] Simpan menulis ke tabel transactions; muncul di /transaksi dan /dashboard
+- [x] ocr_logs hanya bertambah saat OCR berhasil (bukan saat gagal)
+- [ ] Batas harian 10/user dites sampai kena limit
+- [ ] Retry otomatis saat Gemini 503 (high demand)
+- [ ] Mode demo dibatasi ke screenshot contoh (bukan upload bebas)
 
 ## Rencana fase berikutnya
 
