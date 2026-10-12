@@ -81,37 +81,50 @@ export async function extractTransactionsFromImage(
   }
 
   let response: Response;
+  let attempt = 0;
 
   try {
-    response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: prompt },
-                {
-                  inlineData: {
-                    mimeType,
-                    data: imageBase64,
-                  },
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema,
+    do {
+      response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey,
           },
-        }),
-      },
-    );
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  { text: prompt },
+                  {
+                    inlineData: {
+                      mimeType,
+                      data: imageBase64,
+                    },
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              responseMimeType: "application/json",
+              responseSchema,
+            },
+          }),
+        },
+      );
+      attempt += 1;
+
+      if (
+        (response.status !== 503 && response.status !== 429) ||
+        attempt === 3
+      ) {
+        break;
+      }
+
+      await new Promise((r) => setTimeout(r, 2000));
+    } while (attempt < 3);
   } catch {
     return { ok: false, error: "Permintaan OCR gagal." };
   }
