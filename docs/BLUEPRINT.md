@@ -18,14 +18,14 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 
 ## Fase dan status
 
-| Fase                      | Isi                                                        | Status                                                               |
-| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------- |
-| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                               |
-| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel                     |
-| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual                |
-| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel                           |
-| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | MVP selesai: alur end-to-end jalan. Sisa: batasi demo, retry, README |
-| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                                |
+| Fase                      | Isi                                                        | Status                                                            |
+| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------- |
+| 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                            |
+| 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel                  |
+| 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual             |
+| 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel                        |
+| 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Selesai: alur end-to-end, batas harian, retry 503, anonim ditolak |
+| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                             |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
@@ -93,6 +93,9 @@ Edit transaksi, anggaran, impor/ekspor, berbagi data antar anggota keluarga.
 - Nama kategori unik tanpa membedakan huruf besar/kecil.
 - Batas rentang tanggal yang wajar di database.
 - Uji skema dan RLS otomatis di Postgres lokal (PGlite), disimpan di `db/tests/`.
+- Cek anonim pakai `user.is_anonymous === true || !user.email`. Kalau nanti
+  nambah provider login lain (GitHub, email/password), ganti jadi cek
+  `is_anonymous` saja supaya tidak false-positive.
 
 ## Privasi & OCR
 
