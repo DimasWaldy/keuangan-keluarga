@@ -55,6 +55,60 @@
 - OCR hanya tersedia untuk user login. Mode demo ditolak, dan screenshot tidak disimpan setelah diproses.
 - Ringkasan bulanan dihitung lewat fungsi SQL, bukan di aplikasi, karena API membatasi jumlah baris per permintaan.
 
+## Arsitektur
+
+Aplikasi berjalan sepenuhnya di server. Browser hanya menerima HTML dan cookie sesi. Setiap permintaan data melewati Server Action Next.js yang memvalidasi sesi lewat Supabase, lalu query ke Postgres dengan Row Level Security aktif. API key Gemini tidak pernah sampai ke browser.
+
+### Alur aplikasi
+
+```mermaid
+flowchart LR
+    U[Browser] -->|HTTPS| N[Next.js di Vercel]
+    N -->|Server Action + cookies| S[Supabase Auth]
+    N -->|SQL via RLS| P[(Postgres)]
+    N -->|Server only, API key| G[Gemini API]
+    N -->|redirect OAuth| A[Google OAuth]
+    A -->|callback| S
+```
+
+### Relasi database (ERD)
+
+```mermaid
+erDiagram
+    users ||--o{ categories : "memiliki"
+    users ||--o{ transactions : "memiliki"
+    users ||--o{ ocr_logs : "memiliki"
+    categories ||--o{ transactions : "dipakai oleh"
+
+    users {
+        uuid id PK
+        text email
+        boolean is_anonymous
+    }
+
+    categories {
+        uuid id PK
+        uuid user_id FK
+        text name
+        text type "income atau expense"
+    }
+
+    transactions {
+        uuid id PK
+        uuid user_id FK
+        uuid category_id FK
+        numeric amount
+        date occurred_on
+        text note
+    }
+
+    ocr_logs {
+        uuid id PK
+        uuid user_id FK
+        timestamptz created_at
+    }
+```
+
 ## Struktur proyek
 
 ```text
