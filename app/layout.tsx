@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Keuangan Keluarga",
+  title: "My Money Money",
   description:
-    "Aplikasi pencatat keuangan keluarga: kategori dan transaksi. Proyek portofolio dengan Next.js dan Supabase.",
+    "Aplikasi pencatat keuangan keluarga dengan input OCR dari screenshot.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

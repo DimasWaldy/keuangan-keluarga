@@ -32,7 +32,7 @@ export default function Home() {
             Proyek portofolio
           </p>
           <h1 className="text-4xl font-semibold tracking-tight">
-            Keuangan Keluarga
+            My Money Money
           </h1>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
             Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga,
