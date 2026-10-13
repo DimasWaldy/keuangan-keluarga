@@ -69,9 +69,9 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Checkbox per transaksi; yang tidak dicentang tidak disimpan
 - [x] Simpan menulis ke tabel transactions; muncul di /transaksi dan /dashboard
 - [x] ocr_logs hanya bertambah saat OCR berhasil (bukan saat gagal)
-- [ ] Batas harian 10/user dites sampai kena limit
-- [ ] Retry otomatis saat Gemini 503 (high demand)
-- [ ] Mode demo dibatasi ke screenshot contoh (bukan upload bebas)
+- [x] Batas harian 10/user dites sampai kena limit
+- [x] Retry otomatis saat Gemini 503 (high demand)
+- [x] Mode demo dibatasi ke screenshot contoh (bukan upload bebas)
 
 ## Rencana fase berikutnya
 
@@ -93,3 +93,13 @@ Edit transaksi, anggaran, impor/ekspor, berbagi data antar anggota keluarga.
 - Nama kategori unik tanpa membedakan huruf besar/kecil.
 - Batas rentang tanggal yang wajar di database.
 - Uji skema dan RLS otomatis di Postgres lokal (PGlite), disimpan di `db/tests/`.
+
+## Privasi & OCR
+
+Fitur OCR memakai Gemini API dengan tier gratis. Google dapat menggunakan
+data yang dikirim ke tier gratis untuk meningkatkan model mereka. **Jangan
+unggah screenshot berisi data finansial asli di mode demo ini.**
+
+Di produksi sesungguhnya, aplikasi wajib memakai tier berbayar Gemini (data
+tidak dipakai untuk training) atau penyedia OCR lain dengan perjanjian
+perlindungan data yang jelas.
