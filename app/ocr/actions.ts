@@ -54,6 +54,14 @@ export async function extractTransactions(
     redirect("/login");
   }
 
+  const isAnonymous = user.is_anonymous === true || !user.email;
+
+  if (isAnonymous) {
+    return errorState(
+      "Fitur ini hanya tersedia untuk akun yang login dengan Google.",
+    );
+  }
+
   const image = formData.get("image");
 
   if (
@@ -133,6 +141,15 @@ export async function saveExtractedTransactions(
 
   if (authError || !user) {
     redirect("/login");
+  }
+
+  const isAnonymous = user.is_anonymous === true || !user.email;
+
+  if (isAnonymous) {
+    return {
+      error: "Fitur ini hanya tersedia untuk akun yang login dengan Google.",
+      successCount: null,
+    };
   }
 
   const payload = formData.get("payload");
