@@ -27,7 +27,6 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 | 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Selesai: alur end-to-end, batas harian, retry 503, anonim ditolak |
 | 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Selesai: README, ERD, SECURITY.md, diagram Mermaid, screenshot    |     |
 | 6. Redesign UI            | Tema gelap/terang, palette hijau, polish halaman           | MVP selesai: semua halaman dipoles                                |
-|                           |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
