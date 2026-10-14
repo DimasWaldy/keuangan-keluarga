@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { ExpenseChart } from "@/components/expense-chart";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   currentMonthInJakarta,
@@ -16,6 +17,12 @@ type MonthlySummary = {
   income: number | string;
   expense: number | string;
   net: number | string;
+};
+
+type ExpenseCategory = {
+  category_id: string;
+  category_name: string;
+  total: number | string;
 };
 
 const emptySummary: MonthlySummary = {
@@ -135,6 +142,21 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     summaryError = true;
   }
 
+  let expenseData: ExpenseCategory[] = [];
+
+  try {
+    const { data, error: expenseError } = await supabase.rpc(
+      "expense_by_category",
+      { p_month: `${month}-01` },
+    );
+
+    if (!expenseError && Array.isArray(data)) {
+      expenseData = data as ExpenseCategory[];
+    }
+  } catch {
+    expenseData = [];
+  }
+
   const hasNoTransactions =
     !summaryError &&
     Number(summary.income) === 0 &&
@@ -225,6 +247,8 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           <SummaryCard label="Pengeluaran" value={summary.expense} tone="expense" />
           <SummaryCard label="Selisih tercatat" value={summary.net} tone="net" />
         </div>
+
+        <ExpenseChart data={expenseData} />
 
         {hasNoTransactions && (
           <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm leading-6 text-muted-foreground shadow-[var(--shadow)]">
