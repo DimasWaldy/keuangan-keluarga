@@ -5,7 +5,11 @@ import { connection } from "next/server";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { todayInJakarta } from "@/utils/date";
 import { createClient } from "@/utils/supabase/server";
-import { AddTransactionForm, DeleteTransactionForm } from "./forms";
+import {
+  AddTransactionForm,
+  DeleteTransactionForm,
+  EditTransactionForm,
+} from "./forms";
 import type { Transaction, TransactionCategory } from "./types";
 
 const pageSize = 20;
@@ -56,7 +60,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
         .overrideTypes<TransactionCategory[], { merge: false }>(),
       supabase
         .from("transactions")
-        .select("id,amount,occurred_on,note,category:categories(name,type)")
+        .select("id,category_id,amount,occurred_on,note,category:categories(name,type)")
         .order("occurred_on", { ascending: false })
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
@@ -180,7 +184,17 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
                       {transaction.note}
                     </p>
                   )}
-                  <div className="mt-3">
+                  <div className="mt-3 flex flex-wrap items-start gap-2">
+                    <EditTransactionForm
+                      transaction={{
+                        id: transaction.id,
+                        category_id: transaction.category_id,
+                        amount: String(transaction.amount),
+                        occurred_on: transaction.occurred_on,
+                        note: transaction.note,
+                      }}
+                      categories={categories}
+                    />
                     <DeleteTransactionForm id={transaction.id} />
                   </div>
                 </li>

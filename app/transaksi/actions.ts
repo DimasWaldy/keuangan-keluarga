@@ -6,6 +6,8 @@ import { createClient } from "@/utils/supabase/server";
 import type { TransactionActionState } from "./types";
 import { isUuid, validateTransaction } from "./validation";
 
+export type UpdateTransactionState = { error: string | null };
+
 export async function addTransaction(
   _previousState: TransactionActionState,
   formData: FormData,
@@ -96,5 +98,51 @@ export async function deleteTransaction(
   }
 
   revalidatePath("/transaksi");
+  return { error: null };
+}
+
+export async function updateTransaction(
+  _previousState: UpdateTransactionState,
+  formData: FormData,
+): Promise<UpdateTransactionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    redirect("/login");
+  }
+
+  const id = formData.get("id");
+
+  if (!isUuid(id)) {
+    return { error: "Transaksi yang akan diubah tidak valid." };
+  }
+
+  const validated = validateTransaction(formData);
+
+  if (!validated.data) {
+    return { error: validated.error };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("transactions")
+      .update(validated.data)
+      .eq("id", id)
+      .select("id")
+      .maybeSingle();
+
+    if (error || !data) {
+      return { error: "Transaksi tidak ditemukan atau tidak bisa diubah." };
+    }
+  } catch {
+    return { error: "Transaksi tidak ditemukan atau tidak bisa diubah." };
+  }
+
+  revalidatePath("/transaksi");
+  revalidatePath("/dashboard");
   return { error: null };
 }

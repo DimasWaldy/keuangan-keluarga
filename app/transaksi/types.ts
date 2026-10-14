@@ -10,6 +10,7 @@ export type TransactionActionState = {
 
 export type Transaction = {
   id: string;
+  category_id: string;
   amount: number | string;
   occurred_on: string;
   note: string | null;
