@@ -142,6 +142,7 @@ proxy.ts
 - [Blueprint proyek](docs/BLUEPRINT.md)
 - [Aturan kerja](AGENTS.md)
 - [Catatan keamanan](docs/SECURITY.md)
+- [Hasil tes penyimpanan nominal](docs/TEST_NOMINAL.md)
 
 ## Lisensi
 
