@@ -28,10 +28,8 @@
 ## Screenshot
 
 ![Dashboard](docs/screenshots/dashboard.png)
-![Daftar transaksi](docs/screenshots/transaksi.png)
-![OCR dan konfirmasi](docs/screenshots/ocr.png)
 
-_(Gambar akan ditambahkan menyusul.)_
+![Daftar transaksi](docs/screenshots/transaksi.png)
 
 ## Menjalankan di lokal
 
