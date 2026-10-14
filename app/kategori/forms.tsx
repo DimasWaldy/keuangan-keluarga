@@ -8,14 +8,16 @@ import {
 } from "./actions";
 
 const initialState: CategoryActionState = { error: null };
+const fieldClass =
+  "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function AddCategoryForm() {
   const [state, formAction, pending] = useActionState(addCategory, initialState);
 
   return (
-    <form action={formAction} className="space-y-4" aria-busy={pending}>
+    <form action={formAction} className="grid gap-4 sm:grid-cols-2" aria-busy={pending}>
       <div className="space-y-2">
-        <label htmlFor="category-name" className="block text-sm font-medium">
+        <label htmlFor="category-name" className="block text-sm font-semibold">
           Nama kategori
         </label>
         <input
@@ -25,11 +27,11 @@ export function AddCategoryForm() {
           required
           maxLength={50}
           aria-describedby={state.error ? "add-category-error" : undefined}
-          className="w-full rounded-lg border border-black/20 bg-background px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 dark:border-white/20"
+          className={fieldClass}
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="category-type" className="block text-sm font-medium">
+        <label htmlFor="category-type" className="block text-sm font-semibold">
           Jenis
         </label>
         <select
@@ -37,7 +39,7 @@ export function AddCategoryForm() {
           name="type"
           defaultValue="income"
           required
-          className="w-full rounded-lg border border-black/20 bg-background px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 dark:border-white/20"
+          className={fieldClass}
         >
           <option value="income">Pemasukan</option>
           <option value="expense">Pengeluaran</option>
@@ -47,18 +49,20 @@ export function AddCategoryForm() {
         <p
           id="add-category-error"
           role="alert"
-          className="text-sm text-red-600 dark:text-red-400"
+          className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2"
         >
           {state.error}
         </p>
       )}
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-lg bg-foreground px-5 py-3 font-medium text-background transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-wait disabled:opacity-60"
-      >
-        {pending ? "Menambahkan..." : "Tambah kategori"}
-      </button>
+      <div className="sm:col-span-2">
+        <button
+          type="submit"
+          disabled={pending}
+          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+        >
+          {pending ? "Menambahkan..." : "Tambah kategori"}
+        </button>
+      </div>
     </form>
   );
 }
@@ -73,22 +77,18 @@ export function DeleteCategoryForm({
   const [state, formAction, pending] = useActionState(deleteCategory, initialState);
 
   return (
-    <form
-      action={formAction}
-      className="max-w-xs space-y-2 text-right"
-      aria-busy={pending}
-    >
+    <form action={formAction} className="max-w-xs space-y-2 text-right" aria-busy={pending}>
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
         disabled={pending}
         aria-label={`Hapus kategori ${name}`}
-        className="rounded-lg border border-black/20 px-3 py-2 text-sm font-medium transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-wait disabled:opacity-60 dark:border-white/20 dark:hover:bg-white/10"
+        className="rounded-xl px-3 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Menghapus..." : "Hapus"}
       </button>
       {state.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">
           {state.error}
         </p>
       )}

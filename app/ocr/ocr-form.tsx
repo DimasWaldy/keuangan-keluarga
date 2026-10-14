@@ -20,57 +20,67 @@ export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
 
   return (
     <div className="space-y-6">
-      <form action={formAction} className="space-y-4" aria-busy={pending}>
-        <div className="space-y-2">
-          <label htmlFor="ocr-image" className="block text-sm font-medium">
+      <form
+        action={formAction}
+        className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6"
+        aria-busy={pending}
+      >
+        <div className="rounded-[1.5rem] border border-dashed border-border bg-muted p-5 sm:p-6">
+          <label htmlFor="ocr-image" className="block text-sm font-semibold">
             Gambar transaksi
           </label>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            Pilih screenshot atau foto struk untuk diekstrak sebelum Anda menyimpannya.
+          </p>
           <input
             id="ocr-image"
             type="file"
             name="image"
             accept="image/jpeg,image/png,image/webp"
             required
-            className="block w-full rounded-lg border border-black/20 bg-background px-3 py-2 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-foreground file:px-3 file:py-2 file:font-medium file:text-background focus-visible:outline-2 focus-visible:outline-offset-2 dark:border-white/20"
+            className="mt-5 block w-full rounded-xl border border-border bg-card px-3 py-2 text-sm shadow-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           />
         </div>
 
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-foreground px-5 py-3 font-medium text-background transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-wait disabled:opacity-60"
+          className="mt-5 min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Memproses..." : "Ekstrak dengan Gemini"}
         </button>
       </form>
 
       {state.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
           {state.error}
         </p>
       )}
 
       {!pending && state.transactions && state.transactions.length > 0 && (
-        <section aria-labelledby="ocr-result-heading" className="space-y-3">
-          <p id="ocr-result-heading" className="font-medium text-green-700 dark:text-green-400">
-            Ditemukan {state.transactions.length} transaksi.
-          </p>
+        <section aria-labelledby="ocr-result-heading" className="space-y-4">
+          <div className="flex items-center gap-3 px-1">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+              {state.transactions.length}
+            </span>
+            <p id="ocr-result-heading" className="font-semibold text-primary">
+              Transaksi ditemukan. Periksa dulu sebelum disimpan.
+            </p>
+          </div>
           <ConfirmForm transactions={state.transactions} categories={categories} />
         </section>
       )}
 
       {state.transactions?.length === 0 && !state.error && (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="rounded-2xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground shadow-[var(--shadow)]">
           Tidak ada transaksi yang bisa dibaca dari gambar ini.
         </p>
       )}
 
       {state.raw && (
-        <details className="space-y-3 rounded-lg border border-black/10 p-4 dark:border-white/10">
-          <summary className="cursor-pointer font-medium">
-            Respons asli Gemini (untuk debugging)
-          </summary>
-          <pre className="overflow-x-auto whitespace-pre-wrap break-words text-sm">
+        <details className="rounded-[1.5rem] border border-border bg-card p-5 shadow-[var(--shadow)]">
+          <summary className="cursor-pointer font-semibold">Respons asli Gemini (untuk debugging)</summary>
+          <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-words rounded-xl bg-muted p-4 text-sm text-muted-foreground">
             {state.raw}
           </pre>
         </details>

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   currentMonthInJakarta,
   formatMonthId,
@@ -49,16 +50,25 @@ function isValidSummary(value: unknown): value is MonthlySummary {
 function SummaryCard({
   label,
   value,
+  tone,
 }: {
   label: string;
   value: number | string;
+  tone: "income" | "expense" | "net";
 }) {
+  const toneClass = {
+    income: "bg-primary",
+    expense: "bg-danger",
+    net: "bg-muted-foreground/50",
+  }[tone];
+
   return (
-    <article className="min-w-0 space-y-2 rounded-lg border border-black/10 p-4 dark:border-white/10">
-      <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-        {label}
-      </h3>
-      <p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">
+    <article className="min-w-0 rounded-[1.5rem] border border-border bg-card p-5 shadow-[var(--shadow)]">
+      <div className="flex items-center gap-2">
+        <span className={`h-2 w-2 rounded-full ${toneClass}`} />
+        <h3 className="text-sm font-medium text-muted-foreground">{label}</h3>
+      </div>
+      <p className="mt-4 break-words text-xl font-semibold tracking-tight tabular-nums sm:text-2xl">
         {formatRupiah(value)}
       </p>
     </article>
@@ -131,71 +141,95 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
   const nextMonth = shiftMonth(month, 1);
 
   return (
-    <div className="w-full max-w-2xl space-y-8">
-      <div className="space-y-3">
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="break-all">{user.email ? user.email : "Mode demo"}</p>
-        <nav aria-label="Menu utama" className="flex flex-wrap gap-4">
+    <div className="mx-auto w-full max-w-5xl space-y-6">
+      <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-bold tracking-tight text-primary-foreground">
+              MM
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">My Money Money</p>
+              <p className="break-all text-sm text-muted-foreground">
+                {user.email ? user.email : "Mode demo"}
+              </p>
+            </div>
+          </div>
+          <ThemeToggle />
+        </div>
+
+        <nav aria-label="Menu utama" className="mt-5 flex flex-wrap gap-2">
           <Link
             href="/kategori"
-            className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Kategori
           </Link>
           <Link
             href="/transaksi"
-            className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Transaksi
           </Link>
           <Link
             href="/ocr"
-            className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             OCR
           </Link>
         </nav>
-      </div>
+      </header>
 
-      <section aria-labelledby="monthly-summary-heading" className="space-y-4">
-        <h2 id="monthly-summary-heading" className="text-lg font-semibold">
-          Ringkasan bulanan
-        </h2>
+      <section aria-labelledby="monthly-summary-heading" className="space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-3 px-1">
+          <div>
+            <p className="text-sm font-semibold text-primary">Ikhtisar keuangan</p>
+            <h1 id="monthly-summary-heading" className="mt-1 text-3xl font-semibold tracking-tight">
+              Dashboard
+            </h1>
+          </div>
+        </div>
+
         <nav
           aria-label="Pilih bulan ringkasan"
-          className="grid grid-cols-1 items-center gap-3 text-sm sm:grid-cols-3"
+          className="grid grid-cols-1 items-center gap-2 rounded-[1.5rem] border border-border bg-muted p-2 text-sm sm:grid-cols-3"
         >
           <Link
             href={`/dashboard?bulan=${previousMonth}`}
-            className="justify-self-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 sm:justify-self-start"
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
           >
             Bulan sebelumnya
           </Link>
-          <p className="text-center font-medium">{formatMonthId(month)}</p>
+          <p className="rounded-xl bg-card px-3 py-2.5 text-center font-semibold shadow-sm">
+            {formatMonthId(month)}
+          </p>
           <Link
             href={`/dashboard?bulan=${nextMonth}`}
-            className="justify-self-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 sm:justify-self-end"
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
           >
             Bulan berikutnya
           </Link>
         </nav>
 
         {summaryError && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
             Gagal memuat ringkasan bulanan. Silakan coba lagi.
           </p>
         )}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <SummaryCard label="Pemasukan" value={summary.income} />
-          <SummaryCard label="Pengeluaran" value={summary.expense} />
-          <SummaryCard label="Selisih tercatat" value={summary.net} />
+          <SummaryCard label="Pemasukan" value={summary.income} tone="income" />
+          <SummaryCard label="Pengeluaran" value={summary.expense} tone="expense" />
+          <SummaryCard label="Selisih tercatat" value={summary.net} tone="net" />
         </div>
 
         {hasNoTransactions && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm leading-6 text-muted-foreground shadow-[var(--shadow)]">
             Belum ada transaksi di bulan ini.{" "}
-            <Link href="/transaksi" className="underline underline-offset-4">
+            <Link
+              href="/transaksi"
+              className="font-semibold text-primary underline underline-offset-4"
+            >
               Tambah transaksi
             </Link>
             .
@@ -203,10 +237,10 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         )}
       </section>
 
-      <form action={signOut}>
+      <form action={signOut} className="pb-4">
         <button
           type="submit"
-          className="rounded-lg bg-foreground px-5 py-3 font-medium text-background transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4"
+          className="rounded-xl px-4 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
           Keluar
         </button>
@@ -221,8 +255,8 @@ export default function DashboardPage({
   searchParams: SearchParams;
 }) {
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-12">
-      <Suspense fallback={<p>Memuat dashboard...</p>}>
+    <main className="flex flex-1 px-4 py-6 sm:px-6 sm:py-10">
+      <Suspense fallback={<p className="text-sm text-muted-foreground">Memuat dashboard...</p>}>
         <Dashboard searchParams={searchParams} />
       </Suspense>
     </main>

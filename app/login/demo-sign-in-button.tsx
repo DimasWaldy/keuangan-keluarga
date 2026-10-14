@@ -13,15 +13,15 @@ export default function DemoSignInButton() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg border border-black/20 px-5 py-3 font-medium transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-wait disabled:opacity-60 dark:border-white/20 dark:hover:bg-white/10"
+        className="flex min-h-12 w-full items-center justify-center rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Menyiapkan demo..." : "Coba Demo tanpa Login"}
       </button>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm leading-6 text-muted-foreground">
         Akun sementara dengan data contoh, tanpa perlu daftar.
       </p>
       {state.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">
           {state.error}
         </p>
       )}

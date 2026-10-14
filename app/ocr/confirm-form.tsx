@@ -7,7 +7,7 @@ import { saveExtractedTransactions } from "./actions";
 import type { ExtractedTransaction, SaveOcrState } from "./types";
 
 const fieldClass =
-  "w-full rounded-lg border border-black/20 bg-background px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 dark:border-white/20";
+  "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60";
 const initialSaveState: SaveOcrState = { error: null, successCount: null };
 
 type ConfirmItem = {
@@ -78,7 +78,7 @@ export function ConfirmForm({
   }
 
   return (
-    <form action={formAction} className="space-y-6" aria-busy={pending}>
+    <form action={formAction} className="space-y-5" aria-busy={pending}>
       <input type="hidden" name="payload" value={payload} />
 
       {items.map((item, index) => {
@@ -88,14 +88,17 @@ export function ConfirmForm({
         return (
           <fieldset
             key={index}
-            className="min-w-0 space-y-4 rounded-lg border border-black/10 p-4 dark:border-white/10"
+            className="min-w-0 rounded-[1.5rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6"
           >
-            <legend className="px-2 font-semibold">Transaksi {index + 1}</legend>
-            <label className="flex items-center gap-2 text-sm font-medium">
+            <legend className="px-2 text-lg font-semibold tracking-tight">
+              Transaksi {index + 1}
+            </legend>
+            <label className="mt-2 flex items-center gap-3 rounded-xl bg-muted px-3 py-2.5 text-sm font-semibold">
               <input
                 type="checkbox"
                 checked={item.checked}
                 disabled={pending || saved}
+                className="h-4 w-4 accent-primary"
                 onChange={(event) =>
                   updateItem(index, { checked: event.target.checked })
                 }
@@ -103,88 +106,90 @@ export function ConfirmForm({
               Simpan transaksi ini
             </label>
 
-            <div className="space-y-2">
-              <label htmlFor={`${prefix}-amount`} className="block text-sm font-medium">
-                Nominal (Rp)
-              </label>
-              <input
-                id={`${prefix}-amount`}
-                type="text"
-                inputMode="decimal"
-                value={item.amount}
-                required
-                disabled={disabled}
-                placeholder="50.000 atau 50.000,50"
-                aria-describedby={`${prefix}-amount-help`}
-                className={fieldClass}
-                onChange={(event) => updateItem(index, { amount: event.target.value })}
-              />
-              <p id={`${prefix}-amount-help`} className="text-sm text-zinc-600 dark:text-zinc-400">
-                Titik untuk ribuan, koma untuk desimal.
-              </p>
-            </div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label htmlFor={`${prefix}-amount`} className="block text-sm font-semibold">
+                  Nominal (Rp)
+                </label>
+                <input
+                  id={`${prefix}-amount`}
+                  type="text"
+                  inputMode="decimal"
+                  value={item.amount}
+                  required
+                  disabled={disabled}
+                  placeholder="50.000 atau 50.000,50"
+                  aria-describedby={`${prefix}-amount-help`}
+                  className={fieldClass}
+                  onChange={(event) => updateItem(index, { amount: event.target.value })}
+                />
+                <p id={`${prefix}-amount-help`} className="text-xs leading-5 text-muted-foreground">
+                  Titik untuk ribuan, koma untuk desimal.
+                </p>
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor={`${prefix}-date`} className="block text-sm font-medium">
-                Tanggal
-              </label>
-              <input
-                id={`${prefix}-date`}
-                type="date"
-                value={item.occurred_on}
-                required
-                disabled={disabled}
-                className={fieldClass}
-                onChange={(event) => updateItem(index, { occurred_on: event.target.value })}
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor={`${prefix}-date`} className="block text-sm font-semibold">
+                  Tanggal
+                </label>
+                <input
+                  id={`${prefix}-date`}
+                  type="date"
+                  value={item.occurred_on}
+                  required
+                  disabled={disabled}
+                  className={fieldClass}
+                  onChange={(event) => updateItem(index, { occurred_on: event.target.value })}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor={`${prefix}-category`} className="block text-sm font-medium">
-                Kategori
-              </label>
-              <select
-                id={`${prefix}-category`}
-                value={item.category_id}
-                required
-                disabled={disabled}
-                className={fieldClass}
-                onChange={(event) => updateItem(index, { category_id: event.target.value })}
-              >
-                <option value="" disabled>Pilih kategori</option>
-                <optgroup label="Pemasukan">
-                  {categories.filter((category) => category.type === "income").map((category) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="Pengeluaran">
-                  {categories.filter((category) => category.type === "expense").map((category) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
+              <div className="space-y-2">
+                <label htmlFor={`${prefix}-category`} className="block text-sm font-semibold">
+                  Kategori
+                </label>
+                <select
+                  id={`${prefix}-category`}
+                  value={item.category_id}
+                  required
+                  disabled={disabled}
+                  className={fieldClass}
+                  onChange={(event) => updateItem(index, { category_id: event.target.value })}
+                >
+                  <option value="" disabled>Pilih kategori</option>
+                  <optgroup label="Pemasukan">
+                    {categories.filter((category) => category.type === "income").map((category) => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Pengeluaran">
+                    {categories.filter((category) => category.type === "expense").map((category) => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </optgroup>
+                </select>
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor={`${prefix}-note`} className="block text-sm font-medium">
-                Catatan (opsional)
-              </label>
-              <textarea
-                id={`${prefix}-note`}
-                value={item.note}
-                maxLength={200}
-                rows={3}
-                disabled={disabled}
-                className={fieldClass}
-                onChange={(event) => updateItem(index, { note: event.target.value })}
-              />
+              <div className="space-y-2">
+                <label htmlFor={`${prefix}-note`} className="block text-sm font-semibold">
+                  Catatan (opsional)
+                </label>
+                <textarea
+                  id={`${prefix}-note`}
+                  value={item.note}
+                  maxLength={200}
+                  rows={3}
+                  disabled={disabled}
+                  className={fieldClass}
+                  onChange={(event) => updateItem(index, { note: event.target.value })}
+                />
+              </div>
             </div>
           </fieldset>
         );
       })}
 
       {saveState.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
           {saveState.error}
         </p>
       )}
@@ -192,15 +197,15 @@ export function ConfirmForm({
       <button
         type="submit"
         disabled={pending || selectedItems.length === 0 || saved}
-        className="rounded-lg bg-foreground px-5 py-3 font-medium text-background transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
+        className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
       >
         {pending ? "Menyimpan..." : `Simpan ${selectedItems.length} transaksi`}
       </button>
 
       {saved && (
-        <p role="status" className="text-sm text-green-700 dark:text-green-400">
+        <p role="status" className="rounded-2xl bg-primary/10 px-4 py-3 text-sm text-primary">
           {saveState.successCount} transaksi berhasil disimpan.{" "}
-          <Link href="/transaksi" className="underline underline-offset-4">
+          <Link href="/transaksi" className="font-semibold underline underline-offset-4">
             Lihat transaksi
           </Link>
         </p>

@@ -36,12 +36,12 @@ export default function GoogleSignInButton() {
         onClick={signInWithGoogle}
         disabled={pending}
         aria-busy={pending}
-        className="w-full rounded-lg bg-foreground px-5 py-3 font-medium text-background transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-wait disabled:opacity-60"
+        className="flex min-h-12 w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Mengalihkan..." : "Masuk dengan Google"}
       </button>
       {error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">
           {error}
         </p>
       )}
