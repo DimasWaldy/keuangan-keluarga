@@ -18,12 +18,12 @@
 
 ## Stack
 
-| Lapisan  | Teknologi                                           |
-| -------- | --------------------------------------------------- |
-| Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS     |
-| Backend  | Supabase (Postgres, Auth, Row Level Security)         |
-| OCR      | Google Gemini 3.5 Flash                              |
-| Hosting  | Vercel                                              |
+| Lapisan  | Teknologi                                         |
+| -------- | ------------------------------------------------- |
+| Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS |
+| Backend  | Supabase (Postgres, Auth, Row Level Security)     |
+| OCR      | Google Gemini 3.5 Flash                           |
+| Hosting  | Vercel                                            |
 
 ## Screenshot
 
@@ -31,7 +31,7 @@
 ![Daftar transaksi](docs/screenshots/transaksi.png)
 ![OCR dan konfirmasi](docs/screenshots/ocr.png)
 
-*(Gambar akan ditambahkan menyusul.)*
+_(Gambar akan ditambahkan menyusul.)_
 
 ## Menjalankan di lokal
 
@@ -141,6 +141,7 @@ proxy.ts
 
 - [Blueprint proyek](docs/BLUEPRINT.md)
 - [Aturan kerja](AGENTS.md)
+- [Catatan keamanan](docs/SECURITY.md)
 
 ## Lisensi
 
