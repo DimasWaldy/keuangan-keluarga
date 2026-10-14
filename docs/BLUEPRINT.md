@@ -19,13 +19,13 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 ## Fase dan status
 
 | Fase                      | Isi                                                        | Status                                                            |
-| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------- |
+| ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------- | --- |
 | 0. Fondasi                | Login Google, dashboard terlindungi, logout, deploy Vercel | Selesai: lolos di localhost dan Vercel                            |
 | 1. Kategori dan transaksi | CRUD kategori, tambah/daftar/hapus transaksi, RLS          | Selesai: semua tes lolos di localhost dan Vercel                  |
 | 2. Ringkasan bulanan      | Total pemasukan, pengeluaran, dan selisih per bulan        | Selesai: fungsi SQL + UI, angka cocok hitungan manual             |
 | 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel                        |
 | 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Selesai: alur end-to-end, batas harian, retry 503, anonim ditolak |
-| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Belum                                                             |
+| 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Selesai: README, ERD, SECURITY.md, diagram Mermaid, screenshot    |     |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
@@ -73,6 +73,15 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Retry otomatis saat Gemini 503 (high demand)
 - [x] Mode demo dibatasi ke screenshot contoh (bukan upload bebas)
 
+**Fase 5**
+
+- [x] README dengan link demo, fitur, stack, cara setup, dan keputusan keamanan
+- [x] ERD dan diagram alur aplikasi (Mermaid, render di GitHub)
+- [x] docs/SECURITY.md: keputusan keamanan + daftar yang BELUM ada
+- [x] Screenshot dashboard dan transaksi di README
+- [x] Repo GitHub public
+- [ ] Screenshot OCR sukses (placeholder, ditambah nanti)
+
 ## Rencana fase berikutnya
 
 **Fase 2: ringkasan bulanan.** Dihitung lewat fungsi SQL `monthly_summary`, bukan dengan menjumlah di aplikasi: API membatasi jumlah baris per permintaan (default 1000, cek di Settings, API), jadi total di aplikasi bisa diam-diam salah. Selisih adalah pemasukan dikurangi pengeluaran yang tercatat, bukan saldo bank.
@@ -96,6 +105,8 @@ Edit transaksi, anggaran, impor/ekspor, berbagi data antar anggota keluarga.
 - Cek anonim pakai `user.is_anonymous === true || !user.email`. Kalau nanti
   nambah provider login lain (GitHub, email/password), ganti jadi cek
   `is_anonymous` saja supaya tidak false-positive.
+- Batas ukuran file 2 MB (naik jadi 4 MB kalau butuh). Server Action
+  bodySizeLimit di next.config.ts diset 3 MB.
 
 ## Privasi & OCR
 
