@@ -25,12 +25,15 @@ const emptySummary: MonthlySummary = {
 };
 
 function formatRupiah(value: number | string) {
-  return new Intl.NumberFormat("id-ID", {
+  const numeric = Number(value);
+  const formatted = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(Number(value));
+  }).format(Math.abs(numeric));
+  const withoutSpace = formatted.replace(/^Rp\s+/, "Rp");
+  return numeric < 0 ? `-${withoutSpace}` : withoutSpace;
 }
 
 function isValidSummary(value: unknown): value is MonthlySummary {

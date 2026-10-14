@@ -12,12 +12,15 @@ const pageSize = 20;
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 function formatAmount(amount: number | string) {
-  return new Intl.NumberFormat("id-ID", {
+  const numeric = Number(amount);
+  const formatted = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(Number(amount));
+  }).format(Math.abs(numeric));
+  const withoutSpace = formatted.replace(/^Rp\s+/, "Rp");
+  return numeric < 0 ? `-${withoutSpace}` : withoutSpace;
 }
 
 async function Transactions({ searchParams }: { searchParams: SearchParams }) {
