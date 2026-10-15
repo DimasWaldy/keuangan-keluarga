@@ -136,6 +136,13 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             Daftar transaksi
           </h2>
         </div>
+        <a
+          href="/transaksi/export"
+          download
+          className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-card hover:border-primary"
+        >
+          Export CSV
+        </a>
         {transactionError ? (
           <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
             Gagal memuat transaksi. Silakan coba lagi.
