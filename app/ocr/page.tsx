@@ -97,6 +97,10 @@ async function Ocr() {
           <p className="text-sm font-semibold text-primary">Input cerdas</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">OCR Transaksi</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+            OCR memakai Gemini dengan fallback ke Groq. Hasilnya akan ditampilkan
+            untuk dikonfirmasi sebelum disimpan.
+          </p>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
             Unggah screenshot atau foto struk. Hasilnya akan ditampilkan untuk
             dikonfirmasi sebelum disimpan.
           </p>

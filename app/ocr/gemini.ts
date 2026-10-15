@@ -31,6 +31,10 @@ const responseSchema = {
   required: ["transactions"],
 };
 
+type ExtractionResult =
+  | { ok: true; data: unknown }
+  | { ok: false; error: string };
+
 function getResponseText(data: unknown): string | null {
   if (!data || typeof data !== "object") {
     return null;
@@ -70,10 +74,10 @@ function getResponseText(data: unknown): string | null {
   return typeof text === "string" ? text : null;
 }
 
-export async function extractTransactionsFromImage(
+async function extractViaGemini(
   imageBase64: string,
   mimeType: string,
-): Promise<{ ok: true; data: unknown } | { ok: false; error: string }> {
+): Promise<ExtractionResult> {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -130,7 +134,7 @@ export async function extractTransactionsFromImage(
   }
 
   if (!response.ok) {
-    const body = await response.text();
+    const body = await response.text().catch(() => "");
     console.error("[gemini] HTTP", response.status, "body:", body.slice(0, 500));
     return { ok: false, error: `Status HTTP ${response.status}.` };
   }
@@ -147,4 +151,101 @@ export async function extractTransactionsFromImage(
   } catch {
     return { ok: false, error: "Hasil OCR tidak dapat dibaca." };
   }
+}
+
+async function extractViaGroq(
+  imageBase64: string,
+  mimeType: string,
+): Promise<ExtractionResult> {
+  const apiKey = process.env.GROQ_API_KEY;
+
+  if (!apiKey) {
+    return { ok: false, error: "Groq key tidak tersedia." };
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "qwen/qwen3.8-27b",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `${prompt}\n\nSkema JSON: ${JSON.stringify(responseSchema)}\n\nBalas HANYA JSON valid, tanpa penjelasan.`,
+              },
+              {
+                type: "image_url",
+                image_url: { url: `data:${mimeType};base64,${imageBase64}` },
+              },
+            ],
+          },
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.1,
+        max_tokens: 2000,
+      }),
+    });
+  } catch {
+    return { ok: false, error: "Permintaan Groq gagal." };
+  }
+
+  if (!response.ok) {
+    return { ok: false, error: `Groq HTTP ${response.status}.` };
+  }
+
+  try {
+    const responseData = (await response.json()) as {
+      choices?: { message?: { content?: unknown } }[];
+    } | null;
+    const content = responseData?.choices?.[0]?.message?.content;
+
+    if (typeof content !== "string") {
+      return { ok: false, error: "Hasil Groq tidak dapat dibaca." };
+    }
+
+    const data: unknown = JSON.parse(content);
+
+    if (
+      !data ||
+      typeof data !== "object" ||
+      !Array.isArray((data as { transactions?: unknown }).transactions)
+    ) {
+      return { ok: false, error: "Hasil Groq tidak dapat dibaca." };
+    }
+
+    return { ok: true, data };
+  } catch {
+    return { ok: false, error: "Hasil Groq tidak dapat dibaca." };
+  }
+}
+
+export async function extractTransactionsFromImage(
+  imageBase64: string,
+  mimeType: string,
+): Promise<ExtractionResult> {
+  const geminiResult = await extractViaGemini(imageBase64, mimeType);
+
+  if (geminiResult.ok) {
+    return geminiResult;
+  }
+
+  console.warn("[ocr] Gemini gagal, fallback ke Groq");
+  const groqResult = await extractViaGroq(imageBase64, mimeType);
+
+  if (groqResult.ok) {
+    console.info("[ocr] Groq berhasil");
+    return groqResult;
+  }
+
+  console.warn("[ocr] Groq juga gagal: ", groqResult.error);
+  return { ok: false, error: "Gagal memproses gambar. Coba lagi." };
 }

@@ -29,7 +29,7 @@ Dokumen ini menjelaskan keputusan keamanan utama proyek My Money Money dan hal y
 - Nominal dari form menerima format Rupiah Indonesia: titik ribuan opsional dan koma desimal opsional dengan maksimal dua digit. Regex menolak format ambigu seperti `1.5` atau `1,500`, nilai nol, nilai negatif, dan nilai di atas kapasitas `numeric(14,2)`. Hasilnya dinormalisasi menjadi string desimal baku tanpa `parseFloat()` atau konversi `Number()`.
 - Tanggal wajib berformat `YYYY-MM-DD` dan diperiksa berdasarkan jumlah hari setiap bulan, termasuk tahun kabisat. Tanggal seperti `31 Februari` ditolak.
 - Nama kategori di-trim dan harus sepanjang 1–50 karakter. Catatan transaksi di-trim, dibatasi maksimal 200 karakter, dan catatan kosong menjadi `null`; field wajib yang kosong ditolak.
-- Hasil Gemini diperlakukan sebagai input yang tidak dipercaya: nominal desimal baku, tanggal, catatan, dan petunjuk kategori divalidasi. Maksimal 20 transaksi ditampilkan; payload konfirmasi divalidasi ulang oleh action penyimpanan, termasuk kategori milik pengguna.
+- Hasil OCR (Gemini atau Groq) diperlakukan sebagai input yang tidak dipercaya: nominal desimal baku, tanggal, catatan, dan petunjuk kategori divalidasi. Maksimal 20 transaksi ditampilkan; payload konfirmasi divalidasi ulang oleh action penyimpanan, termasuk kategori milik pengguna.
 
 ## Penanganan uang
 
@@ -47,11 +47,12 @@ Dokumen ini menjelaskan keputusan keamanan utama proyek My Money Money dan hal y
 
 ## OCR dan privasi
 
+- Screenshot dapat dikirim ke Groq sebagai fallback kalau Gemini gagal, termasuk HTTP 503/429 atau error lain. Groq memakai model vision `qwen/qwen3.8-27b`. Gambar yang sama berpotensi dikirim ke dua provider pihak ketiga.
 - API key Gemini dibaca hanya di modul server melalui `GEMINI_API_KEY`, tanpa prefix `NEXT_PUBLIC_`, dan dikirim ke Gemini melalui header `x-goog-api-key`. Modul ditandai `server-only`; key tidak disertakan dalam state yang dikembalikan ke browser.
 - Gambar JPG, PNG, atau WebP maksimal 2 MiB diproses sebagai buffer dalam memori request. Aplikasi tidak menyimpan file gambar ke storage atau database. Pernyataan ini berlaku pada penyimpanan aplikasi, bukan sebagai jaminan penghapusan data oleh layanan Gemini.
 - Mode demo ditolak pada halaman OCR dan kedua Server Action menggunakan `user.is_anonymous === true || !user.email`. Penolakan dilakukan sebelum membaca payload, mengecek kuota, memanggil Gemini, atau menulis transaksi. Pemeriksaan server tetap berlaku ketika action dipanggil tanpa melalui halaman.
 - Gambar dan hasilnya dikirim ke layanan pihak ketiga. Menurut [ketentuan Gemini API](https://ai.google.dev/gemini-api/terms), layanan tidak berbayar dapat menggunakan input dan output untuk peningkatan produk serta teknologi pembelajaran mesin, termasuk peninjauan manusia. Google melarang pengiriman informasi sensitif, rahasia, atau pribadi pada layanan tersebut. Status billing dan wilayah dapat mengubah ketentuan yang berlaku; konfigurasi akun proyek belum diverifikasi di sini. Penolakan anonim mengurangi risiko pengunjung demo mengirim data pribadi, tetapi akun Google tetap harus menggunakan data contoh yang telah disamarkan bila memakai layanan tidak berbayar.
-- Kuota aplikasi adalah 10 hasil OCR yang berhasil dan lolos validasi per pengguna per hari WIB, berdasarkan tabel `ocr_logs`. Pemeriksaan memakai `ocr_check()` sebelum Gemini; `ocr_log()` hanya dipanggil setelah hasil valid. Kegagalan Gemini atau hasil tanpa transaksi valid tidak dicatat. Kegagalan pencatatan log menghasilkan peringatan dan tidak menghalangi pengguna melihat hasil.
+- Kuota aplikasi adalah 10 hasil OCR yang berhasil dan lolos validasi per pengguna per hari WIB, berdasarkan tabel `ocr_logs`. Pemeriksaan memakai `ocr_check()` sebelum panggilan provider OCR; `ocr_log()` hanya dipanggil setelah hasil valid. Kegagalan seluruh provider atau hasil tanpa transaksi valid tidak dicatat. Kegagalan pencatatan log menghasilkan peringatan dan tidak menghalangi pengguna melihat hasil.
 - Retry otomatis dilakukan maksimal dua kali setelah percobaan awal jika Gemini mengembalikan HTTP 503 atau 429, dengan jeda 2000 ms. Status lain tidak di-retry. Retry merupakan pemulihan sementara, bukan jaminan ketersediaan layanan.
 
 ## Yang BELUM diimplementasikan
