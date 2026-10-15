@@ -3,7 +3,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { todayInJakarta } from "@/utils/date";
+import {
+  currentMonthInJakarta,
+  formatMonthId,
+  parseMonth,
+  shiftMonth,
+  todayInJakarta,
+} from "@/utils/date";
 import { createClient } from "@/utils/supabase/server";
 import {
   AddTransactionForm,
@@ -41,6 +47,10 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
   }
 
   const params = await searchParams;
+  const bulan = parseMonth(params.bulan) ?? currentMonthInJakarta();
+  const previousMonth = shiftMonth(bulan, -1);
+  const nextMonth = shiftMonth(bulan, 1);
+  const firstDayOfNextMonth = `${nextMonth}-01`;
   const page =
     typeof params.page === "string" && /^[1-9]\d{0,6}$/.test(params.page)
       ? Number(params.page)
@@ -61,6 +71,8 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
       supabase
         .from("transactions")
         .select("id,category_id,amount,occurred_on,note,category:categories(name,type)")
+        .gte("occurred_on", `${bulan}-01`)
+        .lt("occurred_on", firstDayOfNextMonth)
         .order("occurred_on", { ascending: false })
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
@@ -143,15 +155,53 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
         >
           Export CSV
         </a>
+        <nav
+          aria-label="Pilih bulan transaksi"
+          className="grid grid-cols-1 items-center gap-2 rounded-[1.5rem] border border-border bg-muted p-2 text-sm sm:grid-cols-3"
+        >
+          <Link
+            href={`/transaksi?bulan=${previousMonth}`}
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
+          >
+            Bulan sebelumnya
+          </Link>
+          <p className="rounded-xl bg-card px-3 py-2.5 text-center font-semibold text-foreground shadow-sm">
+            {formatMonthId(bulan)}
+          </p>
+          <Link
+            href={`/transaksi?bulan=${nextMonth}`}
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
+          >
+            Bulan berikutnya
+          </Link>
+        </nav>
         {transactionError ? (
           <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
             Gagal memuat transaksi. Silakan coba lagi.
           </p>
         ) : items.length === 0 ? (
           <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm text-muted-foreground shadow-[var(--shadow)]">
-            {page === 1
-              ? "Belum ada transaksi."
-              : "Tidak ada transaksi di halaman ini."}
+            {page === 1 ? (
+              <>
+                Belum ada transaksi di bulan ini.{" "}
+                <Link
+                  href="/transaksi"
+                  className="font-semibold text-primary underline underline-offset-4"
+                >
+                  Lihat semua transaksi
+                </Link>{" "}
+                atau{" "}
+                <a
+                  href="#add-transaction-heading"
+                  className="font-semibold text-primary underline underline-offset-4"
+                >
+                  tambah transaksi baru
+                </a>
+                .
+              </>
+            ) : (
+              "Tidak ada transaksi di halaman ini."
+            )}
           </p>
         ) : (
           <ul className="overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[var(--shadow)]">
@@ -217,7 +267,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
           >
             {page > 1 ? (
               <Link
-                href={`/transaksi?page=${page - 1}`}
+                href={`/transaksi?bulan=${bulan}&page=${page - 1}`}
                 className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Sebelumnya
@@ -228,7 +278,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             <span className="px-3 py-2 font-medium text-muted-foreground">Halaman {page}</span>
             {hasNextPage ? (
               <Link
-                href={`/transaksi?page=${page + 1}`}
+                href={`/transaksi?bulan=${bulan}&page=${page + 1}`}
                 className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Berikutnya
