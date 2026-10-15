@@ -26,7 +26,8 @@ Aplikasi web untuk mencatat pemasukan dan pengeluaran keluarga, dikelompokkan pe
 | 3. Mode demo              | Tombol "Coba Demo" tanpa login                             | Selesai: MVP lolos di localhost dan Vercel                        |
 | 4. OCR                    | Screenshot transaksi, konfirmasi, simpan                   | Selesai: alur end-to-end, batas harian, retry 503, anonim ditolak |
 | 5. Poles                  | README, ERD, diagram, catatan keamanan, bukti tes          | Selesai: README, ERD, SECURITY.md, diagram Mermaid, screenshot    |     |
-| 6. Redesign UI            | Tema gelap/terang, palette hijau, polish halaman           | MVP selesai: semua halaman dipoles                                |
+| 6. Redesign UI            | Tema gelap/terang, palette hijau, polish halaman           | Selesai                                                           |
+| 7. Fitur tambahan         | Filter bulan, edit transaksi, export CSV, grafik kategori  | Selesai                                                           |
 
 Fase 3 sengaja sebelum OCR: login Google masih mode Testing, jadi rekruter belum bisa masuk tanpa mode demo.
 
@@ -89,8 +90,15 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Theme toggle (system / light / dark) di dashboard dan login
 - [x] Pilihan theme tersimpan di localStorage, ikut OS default
 - [x] Redesign halaman login, dashboard, kategori, transaksi, OCR
-- [ ] Screenshot README diperbarui dengan tampilan baru
+- [x] Screenshot README diperbarui dengan tampilan baru
 - [ ] Animasi slide/hover halus di kartu dan tombol
+
+**Fase 7: fitur tambahan**
+
+- [x] Filter bulan di halaman /transaksi
+- [x] Edit transaksi (inline form)
+- [x] Export transaksi ke CSV (comma-separated, kompatibel Excel Indonesia)
+- [x] Grafik pengeluaran per kategori di dashboard (SVG custom, tanpa library)
 
 ## Rencana fase berikutnya
 
