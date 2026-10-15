@@ -101,6 +101,7 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Grafik pengeluaran per kategori di dashboard (SVG custom, tanpa library)
 - [x] Search bar di /transaksi (cari di catatan)
 - [x] Halaman profil dengan statistik user (total transaksi, pemasukan, pengeluaran, kategori tersibuk)
+- [x] Groq sebagai fallback OCR kalau Gemini 503/429 (multi-provider)
 
 ## Rencana fase berikutnya
 
