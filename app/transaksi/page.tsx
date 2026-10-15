@@ -99,7 +99,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/dashboard"
-            className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Kembali ke dashboard
           </Link>
@@ -161,7 +161,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
         >
           <Link
             href={`/transaksi?bulan=${previousMonth}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
           >
             Bulan sebelumnya
           </Link>
@@ -170,7 +170,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
           </p>
           <Link
             href={`/transaksi?bulan=${nextMonth}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
           >
             Bulan berikutnya
           </Link>
@@ -268,7 +268,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             {page > 1 ? (
               <Link
                 href={`/transaksi?bulan=${bulan}&page=${page - 1}`}
-                className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Sebelumnya
               </Link>
@@ -279,7 +279,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             {hasNextPage ? (
               <Link
                 href={`/transaksi?bulan=${bulan}&page=${page + 1}`}
-                className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Berikutnya
               </Link>
@@ -300,7 +300,7 @@ export default function TransactionsPage({
 }) {
   return (
     <main className="flex flex-1 px-4 py-6 sm:px-6 sm:py-10">
-      <Suspense fallback={<p className="text-sm text-muted-foreground">Memuat transaksi...</p>}>
+      <Suspense fallback={<p className="animate-fade-in-up text-sm text-muted-foreground">Memuat transaksi...</p>}>
         <Transactions searchParams={searchParams} />
       </Suspense>
     </main>

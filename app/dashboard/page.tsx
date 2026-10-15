@@ -186,19 +186,19 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         <nav aria-label="Menu utama" className="mt-5 flex flex-wrap gap-2">
           <Link
             href="/kategori"
-            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Kategori
           </Link>
           <Link
             href="/transaksi"
-            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Transaksi
           </Link>
           <Link
             href="/ocr"
-            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             OCR
           </Link>
@@ -221,7 +221,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         >
           <Link
             href={`/dashboard?bulan=${previousMonth}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
           >
             Bulan sebelumnya
           </Link>
@@ -230,7 +230,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           </p>
           <Link
             href={`/dashboard?bulan=${nextMonth}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
+            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
           >
             Bulan berikutnya
           </Link>
@@ -283,7 +283,7 @@ export default function DashboardPage({
 }) {
   return (
     <main className="flex flex-1 px-4 py-6 sm:px-6 sm:py-10">
-      <Suspense fallback={<p className="text-sm text-muted-foreground">Memuat dashboard...</p>}>
+      <Suspense fallback={<p className="animate-fade-in-up text-sm text-muted-foreground">Memuat dashboard...</p>}>
         <Dashboard searchParams={searchParams} />
       </Suspense>
     </main>

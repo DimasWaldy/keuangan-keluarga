@@ -33,10 +33,12 @@ export function ThemeToggle() {
           mounted ? `Ganti tema (sekarang: ${currentTheme})` : "Ganti tema"
         }
         onClick={cycleTheme}
-        className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground shadow-[var(--shadow)] transition-colors hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait"
+        className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground shadow-[var(--shadow)] transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait"
       >
         {mounted && (
           <svg
+            key={currentTheme}
+            className="animate-fade-in-up transition-transform duration-300 ease-out"
             width={18}
             height={18}
             viewBox="0 0 24 24"

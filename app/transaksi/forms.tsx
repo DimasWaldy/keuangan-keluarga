@@ -103,7 +103,7 @@ export function AddTransactionForm({
         />
       </div>
       {state.error && (
-        <p role="alert" className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
+        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
           {state.error}
         </p>
       )}
@@ -111,7 +111,7 @@ export function AddTransactionForm({
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Menambahkan..." : "Tambah transaksi"}
         </button>
@@ -132,7 +132,7 @@ export function DeleteTransactionForm({ id }: { id: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-xl px-3 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+        className="rounded-xl px-3 py-2 text-sm font-semibold text-danger transition-colors duration-150 ease-in hover:ease-out hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Menghapus..." : "Hapus"}
       </button>
@@ -184,7 +184,7 @@ export function EditTransactionForm({
           setHasSubmitted(false);
           setIsEditing(true);
         }}
-        className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+        className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
         Edit
       </button>
@@ -276,7 +276,7 @@ export function EditTransactionForm({
         />
       </div>
       {state.error && (
-        <p role="alert" className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
+        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
           {state.error}
         </p>
       )}
@@ -284,7 +284,7 @@ export function EditTransactionForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Menyimpan..." : "Simpan"}
         </button>
@@ -295,7 +295,7 @@ export function EditTransactionForm({
             setIsEditing(false);
           }}
           disabled={pending}
-          className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-muted-foreground transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
         >
           Batal
         </button>

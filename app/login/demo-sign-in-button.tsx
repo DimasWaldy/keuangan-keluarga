@@ -13,7 +13,7 @@ export default function DemoSignInButton() {
       <button
         type="submit"
         disabled={pending}
-        className="flex min-h-12 w-full items-center justify-center rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+        className="flex min-h-12 w-full items-center justify-center rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Menyiapkan demo..." : "Coba Demo tanpa Login"}
       </button>
@@ -21,7 +21,7 @@ export default function DemoSignInButton() {
         Akun sementara dengan data contoh, tanpa perlu daftar.
       </p>
       {state.error && (
-        <p role="alert" className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">
           {state.error}
         </p>
       )}

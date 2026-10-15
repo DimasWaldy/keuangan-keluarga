@@ -45,14 +45,14 @@ export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="mt-5 min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="mt-5 min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Memproses..." : "Ekstrak dengan Gemini"}
         </button>
       </form>
 
       {state.error && (
-        <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
+        <p role="alert" className="animate-shake rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
           {state.error}
         </p>
       )}

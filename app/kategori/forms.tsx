@@ -49,7 +49,7 @@ export function AddCategoryForm() {
         <p
           id="add-category-error"
           role="alert"
-          className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2"
+          className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2"
         >
           {state.error}
         </p>
@@ -58,7 +58,7 @@ export function AddCategoryForm() {
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Menambahkan..." : "Tambah kategori"}
         </button>
@@ -83,7 +83,7 @@ export function DeleteCategoryForm({
         type="submit"
         disabled={pending}
         aria-label={`Hapus kategori ${name}`}
-        className="rounded-xl px-3 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+        className="rounded-xl px-3 py-2 text-sm font-semibold text-danger transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-danger/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Menghapus..." : "Hapus"}
       </button>
