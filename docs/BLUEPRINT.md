@@ -100,6 +100,7 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Export transaksi ke CSV (comma-separated, kompatibel Excel Indonesia)
 - [x] Grafik pengeluaran per kategori di dashboard (SVG custom, tanpa library)
 - [x] Search bar di /transaksi (cari di catatan)
+- [x] Halaman profil dengan statistik user (total transaksi, pemasukan, pengeluaran, kategori tersibuk)
 
 ## Rencana fase berikutnya
 
