@@ -99,6 +99,7 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Edit transaksi (inline form)
 - [x] Export transaksi ke CSV (comma-separated, kompatibel Excel Indonesia)
 - [x] Grafik pengeluaran per kategori di dashboard (SVG custom, tanpa library)
+- [x] Search bar di /transaksi (cari di catatan)
 
 ## Rencana fase berikutnya
 
