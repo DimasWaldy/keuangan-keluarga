@@ -27,9 +27,21 @@
 
 ## Screenshot
 
-![Dashboard](docs/screenshots/dashboard.png)
+**Dashboard (mode gelap):**
+
+![Dashboard (gelap)](docs/screenshots/dashboard-dark.png)
+
+**Dashboard (mode terang):**
+
+![Dashboard (terang)](docs/screenshots/dashboard.png)
+
+**Daftar transaksi:**
 
 ![Daftar transaksi](docs/screenshots/transaksi.png)
+
+**OCR: unggah struk, konfirmasi, simpan:**
+
+![OCR](docs/screenshots/ocr.png)
 
 ## Menjalankan di lokal
 
