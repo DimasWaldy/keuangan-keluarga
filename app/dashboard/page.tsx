@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { ExpenseChart } from "@/components/expense-chart";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
 import {
   currentMonthInJakarta,
   formatMonthId,
@@ -54,6 +55,19 @@ function isValidSummary(value: unknown): value is MonthlySummary {
     (amount) =>
       (typeof amount === "number" || typeof amount === "string") &&
       Number.isFinite(Number(amount)),
+  );
+}
+
+function isValidTrend(value: unknown, months: string[]): value is TrendDataPoint[] {
+  return Array.isArray(value) && value.length === months.length && months.every(
+    (monthStart) => value.some(
+      (row) => row?.month_start === monthStart && [row.income, row.expense].every(
+        (amount) =>
+          (typeof amount === "number" ||
+            (typeof amount === "string" && amount.trim() !== "")) &&
+          Number.isFinite(Number(amount)) && Number(amount) >= 0,
+      ),
+    ),
   );
 }
 
@@ -140,6 +154,56 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     }
   } catch {
     summaryError = true;
+  }
+
+  const trendMonths = Array.from(
+    { length: 6 },
+    (_, index) => `${shiftMonth(month, index - 5)}-01`,
+  );
+  let trendData: TrendDataPoint[] = [];
+  let trendErrorMessage: string | null = null;
+
+  try {
+    const { data, error: trendError } = await supabase.rpc("monthly_trend_until", {
+      p_end_month: `${month}-01`,
+      p_months: 6,
+    });
+
+    if (trendError?.code === "PGRST202" || trendError?.code === "42883") {
+      // Older deployments may not have migration 008 yet. Keep aggregation in SQL.
+      trendData = await Promise.all(trendMonths.map(async (monthStart) => {
+        if (monthStart === `${month}-01` && !summaryError) {
+          return {
+            month_start: monthStart,
+            income: summary.income,
+            expense: summary.expense,
+          };
+        }
+
+        const { data: monthlyData, error: monthlyError } = await supabase.rpc(
+          "monthly_summary",
+          { p_month: monthStart },
+        );
+        const row = Array.isArray(monthlyData) ? monthlyData[0] : null;
+
+        if (monthlyError || !isValidSummary(row)) {
+          throw new Error("Monthly summary unavailable");
+        }
+
+        return {
+          month_start: monthStart,
+          income: row.income,
+          expense: row.expense,
+        };
+      }));
+    } else if (!trendError && isValidTrend(data, trendMonths)) {
+      trendData = data;
+    } else {
+      throw new Error("Monthly trend unavailable");
+    }
+  } catch {
+    trendData = [];
+    trendErrorMessage = "Gagal memuat grafik tren. Silakan muat ulang halaman.";
   }
 
   let expenseData: ExpenseCategory[] = [];
@@ -249,6 +313,12 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </div>
 
         <ExpenseChart data={expenseData} />
+        <TrendChart
+          data={trendData}
+          title={`Tren 6 bulan hingga ${formatMonthId(month)}`}
+          months={trendMonths}
+          error={trendErrorMessage}
+        />
 
         {hasNoTransactions && (
           <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm leading-6 text-muted-foreground shadow-[var(--shadow)]">
