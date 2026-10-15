@@ -13,6 +13,7 @@ export const config = {
     "/transaksi/:path*",
     "/ocr/:path*",
     "/profil/:path*",
+    "/budget/:path*",
     "/auth/callback",
   ],
 };

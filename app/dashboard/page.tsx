@@ -272,6 +272,12 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           >
             Profil
           </Link>
+          <Link
+            href="/budget"
+            className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            Budget
+          </Link>
         </nav>
       </header>
 
