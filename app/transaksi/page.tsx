@@ -48,6 +48,8 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
 
   const params = await searchParams;
   const bulan = parseMonth(params.bulan) ?? currentMonthInJakarta();
+  const q = (typeof params.q === "string" ? params.q.trim().slice(0, 100) : "") || null;
+  const searchQuery = q ? `&q=${encodeURIComponent(q)}` : "";
   const previousMonth = shiftMonth(bulan, -1);
   const nextMonth = shiftMonth(bulan, 1);
   const firstDayOfNextMonth = `${nextMonth}-01`;
@@ -62,17 +64,24 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
   let transactionError = false;
 
   try {
+    let query = supabase
+      .from("transactions")
+      .select("id,category_id,amount,occurred_on,note,category:categories(name,type)")
+      .gte("occurred_on", `${bulan}-01`)
+      .lt("occurred_on", firstDayOfNextMonth);
+
+    if (q) {
+      const escaped = q.replace(/[%_\\]/g, "\\$&");
+      query = query.ilike("note", `%${escaped}%`);
+    }
+
     const [categoryResult, transactionResult] = await Promise.all([
       supabase
         .from("categories")
         .select("id,name,type")
         .order("name", { ascending: true })
         .overrideTypes<TransactionCategory[], { merge: false }>(),
-      supabase
-        .from("transactions")
-        .select("id,category_id,amount,occurred_on,note,category:categories(name,type)")
-        .gte("occurred_on", `${bulan}-01`)
-        .lt("occurred_on", firstDayOfNextMonth)
+      query
         .order("occurred_on", { ascending: false })
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
@@ -155,12 +164,44 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
         >
           Export CSV
         </a>
+        <form
+          key={q ?? ""}
+          method="GET"
+          action="/transaksi"
+          className="flex flex-col gap-2 sm:flex-row"
+        >
+          <input type="hidden" name="bulan" value={bulan} />
+          <input
+            type="text"
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder="Cari di catatan..."
+            aria-label="Cari transaksi berdasarkan catatan"
+            autoComplete="off"
+            maxLength={100}
+            className="w-full min-w-0 flex-1 rounded-lg border border-border bg-card px-4 py-2 text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
+          />
+          {q && (
+            <Link
+              href={`/transaksi?bulan=${bulan}`}
+              className="shrink-0 self-center text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              Hapus filter
+            </Link>
+          )}
+          <button
+            type="submit"
+            className="rounded-lg bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary-hover"
+          >
+            Cari
+          </button>
+        </form>
         <nav
           aria-label="Pilih bulan transaksi"
           className="grid grid-cols-1 items-center gap-2 rounded-[1.5rem] border border-border bg-muted p-2 text-sm sm:grid-cols-3"
         >
           <Link
-            href={`/transaksi?bulan=${previousMonth}`}
+            href={`/transaksi?bulan=${previousMonth}${searchQuery}`}
             className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
           >
             Bulan sebelumnya
@@ -169,7 +210,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             {formatMonthId(bulan)}
           </p>
           <Link
-            href={`/transaksi?bulan=${nextMonth}`}
+            href={`/transaksi?bulan=${nextMonth}${searchQuery}`}
             className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
           >
             Bulan berikutnya
@@ -181,7 +222,17 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
           </p>
         ) : items.length === 0 ? (
           <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm text-muted-foreground shadow-[var(--shadow)]">
-            {page === 1 ? (
+            {page === 1 && q ? (
+              <>
+                Tidak ada transaksi yang cocok dengan pencarian &quot;{q}&quot; di bulan ini.{" "}
+                <Link
+                  href={`/transaksi?bulan=${bulan}`}
+                  className="font-semibold text-primary underline underline-offset-4"
+                >
+                  Hapus pencarian
+                </Link>
+              </>
+            ) : page === 1 ? (
               <>
                 Belum ada transaksi di bulan ini.{" "}
                 <Link
@@ -267,7 +318,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
           >
             {page > 1 ? (
               <Link
-                href={`/transaksi?bulan=${bulan}&page=${page - 1}`}
+                href={`/transaksi?bulan=${bulan}&page=${page - 1}${searchQuery}`}
                 className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Sebelumnya
@@ -278,7 +329,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             <span className="px-3 py-2 font-medium text-muted-foreground">Halaman {page}</span>
             {hasNextPage ? (
               <Link
-                href={`/transaksi?bulan=${bulan}&page=${page + 1}`}
+                href={`/transaksi?bulan=${bulan}&page=${page + 1}${searchQuery}`}
                 className="rounded-xl px-3 py-2 font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Berikutnya
