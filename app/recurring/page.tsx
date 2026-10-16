@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import type { TransactionCategory } from "@/app/transaksi/types";
 import { createClient } from "@/utils/supabase/server";
-import { CreateRecurringForm, RecurringActions } from "./forms";
+import { CreateRecurringForm, RecurringActions, RunRecurringButton } from "./forms";
 
 type RecurringRule = {
   id: string;
@@ -87,8 +87,11 @@ async function Recurring() {
         </Link>
         <h1 className="mt-7 text-3xl font-semibold tracking-tight">Transaksi berulang</h1>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Buat aturan transaksi bulanan seperti gaji atau langganan. Akan dijalankan otomatis saat kamu buka dashboard.
+          Buat aturan transaksi bulanan seperti gaji atau langganan. Aturan dijalankan otomatis saat kamu buka dashboard, atau klik tombol di bawah untuk menjalankan yang jatuh tempo sekarang.
         </p>
+        <div className="mt-4">
+          <RunRecurringButton />
+        </div>
       </header>
 
       <section aria-labelledby="create-recurring-heading" className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">

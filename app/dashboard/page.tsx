@@ -135,6 +135,13 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     redirect("/login");
   }
 
+  // Lazy trigger: jalankan rule berulang yang sudah jatuh tempo.
+  try {
+    await supabase.rpc("run_recurring_rules");
+  } catch {
+    // Diamkan kalau gagal; fitur ini opsional, jangan sampai dashboard crash.
+  }
+
   const params = await searchParams;
   const requestedMonth =
     typeof params.bulan === "string" ? parseMonth(params.bulan) : null;

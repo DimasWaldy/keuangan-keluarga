@@ -5,11 +5,14 @@ import type { TransactionCategory } from "@/app/transaksi/types";
 import {
   createRecurringRule,
   deleteRecurringRule,
+  runRecurringNow,
   toggleRecurringRule,
   type RecurringActionState,
+  type RunRecurringState,
 } from "./actions";
 
 const initialState: RecurringActionState = { error: null, success: false };
+const runInitialState: RunRecurringState = { error: null, created: null };
 const fieldClass =
   "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
@@ -116,5 +119,31 @@ export function RecurringActions({ id, isActive }: { id: string; isActive: boole
       {toggleState.error && <p role="alert" className="text-xs text-danger">{toggleState.error}</p>}
       {deleteState.error && <p role="alert" className="text-xs text-danger">{deleteState.error}</p>}
     </div>
+  );
+}
+
+export function RunRecurringButton() {
+  const [state, formAction, pending] = useActionState(runRecurringNow, runInitialState);
+
+  return (
+    <form action={formAction} className="space-y-2" aria-busy={pending}>
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+      >
+        {pending ? "Menjalankan..." : "Jalankan yang jatuh tempo sekarang"}
+      </button>
+      {state.error && (
+        <p role="alert" className="text-sm text-danger">{state.error}</p>
+      )}
+      {state.created !== null && !pending && (
+        <p role="status" className={`text-sm ${state.created > 0 ? "text-primary" : "text-muted-foreground"}`}>
+          {state.created > 0
+            ? `${state.created} transaksi berhasil dibuat dari aturan berulang.`
+            : "Tidak ada aturan yang jatuh tempo saat ini."}
+        </p>
+      )}
+    </form>
   );
 }

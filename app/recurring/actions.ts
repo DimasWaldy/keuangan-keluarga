@@ -11,6 +11,11 @@ export type RecurringActionState = {
   success: boolean;
 };
 
+export type RunRecurringState = {
+  error: string | null;
+  created: number | null;
+};
+
 function nextRunDate(dayOfMonth: number) {
   const today = todayInJakarta();
   const month = today.slice(0, 7);
@@ -172,4 +177,41 @@ export async function deleteRecurringRule(
   revalidatePath("/recurring");
   revalidatePath("/dashboard");
   return { error: null, success: true };
+}
+
+export async function runRecurringNow(
+  _prevState: RunRecurringState,
+  _formData: FormData,
+): Promise<RunRecurringState> {
+  void _prevState;
+  void _formData;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    redirect("/login");
+  }
+
+  let created = 0;
+
+  try {
+    const { data, error } = await supabase.rpc("run_recurring_rules");
+
+    if (error) {
+      return { error: "Gagal menjalankan aturan. Coba lagi.", created: null };
+    }
+
+    created = data ?? 0;
+  } catch {
+    return { error: "Gagal menjalankan aturan. Coba lagi.", created: null };
+  }
+
+  revalidatePath("/recurring");
+  revalidatePath("/transaksi");
+  revalidatePath("/dashboard");
+  return { error: null, created };
 }
