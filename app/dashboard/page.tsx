@@ -5,12 +5,14 @@ import { connection } from "next/server";
 import { BudgetProgress, type BudgetStatus } from "@/components/budget-progress";
 import { ExpenseChart } from "@/components/expense-chart";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TodayTransactions, type TodayTransaction } from "@/components/today-transactions";
 import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
 import {
   currentMonthInJakarta,
   formatMonthId,
   parseMonth,
   shiftMonth,
+  todayInJakarta,
 } from "@/utils/date";
 import { createClient } from "@/utils/supabase/server";
 
@@ -164,6 +166,14 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     summaryError = true;
   }
 
+  const today = todayInJakarta();
+  const { data: todayData } = await supabase
+    .from("transactions")
+    .select("id, amount, note, category:categories(name, type)")
+    .eq("occurred_on", today)
+    .order("created_at", { ascending: false })
+    .overrideTypes<TodayTransaction[], { merge: false }>();
+
   const trendMonths = Array.from(
     { length: 6 },
     (_, index) => `${shiftMonth(month, index - 5)}-01`,
@@ -308,6 +318,8 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           </Link>
         </nav>
       </header>
+
+      <TodayTransactions data={todayData ?? []} />
 
       <section aria-labelledby="monthly-summary-heading" className="space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-3 px-1">
