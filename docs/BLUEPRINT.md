@@ -102,6 +102,7 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Search bar di /transaksi (cari di catatan)
 - [x] Halaman profil dengan statistik user (total transaksi, pemasukan, pengeluaran, kategori tersibuk)
 - [x] Groq sebagai fallback OCR kalau Gemini 503/429 (multi-provider)
+- [x] Budget bulanan per kategori pengeluaran dengan progress bar berwarna (hijau/kuning/merah)
 
 ## Rencana fase berikutnya
 
