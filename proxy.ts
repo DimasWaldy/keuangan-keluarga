@@ -15,6 +15,7 @@ export const config = {
     "/profil/:path*",
     "/budget/:path*",
     "/recurring/:path*",
+    "/laporan/:path*",
     "/auth/callback",
   ],
 };

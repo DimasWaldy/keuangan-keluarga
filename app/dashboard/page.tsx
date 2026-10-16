@@ -352,6 +352,13 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           </Link>
         </nav>
 
+        <a
+          href={`/laporan?bulan=${month}`}
+          className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-card hover:border-primary"
+        >
+          Download laporan PDF
+        </a>
+
         {summaryError && (
           <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
             Gagal memuat ringkasan bulanan. Silakan coba lagi.
