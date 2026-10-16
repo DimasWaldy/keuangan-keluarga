@@ -103,6 +103,7 @@ Centang hanya setelah dicoba di aplikasi dengan Supabase asli.
 - [x] Halaman profil dengan statistik user (total transaksi, pemasukan, pengeluaran, kategori tersibuk)
 - [x] Groq sebagai fallback OCR kalau Gemini 503/429 (multi-provider)
 - [x] Budget bulanan per kategori pengeluaran dengan progress bar berwarna (hijau/kuning/merah)
+- [x] Test suite Vitest: 104 test untuk validasi transaksi, util tanggal, dan validasi OCR
 
 ## Rencana fase berikutnya
 

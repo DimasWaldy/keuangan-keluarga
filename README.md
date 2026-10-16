@@ -1,8 +1,13 @@
 # My Money Money
 
+![Tests](https://img.shields.io/badge/tests-104%20passed-brightgreen)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-green)
+![License](https://img.shields.io/badge/license-belum%20ditentukan-lightgrey)
+
 > Aplikasi pencatat keuangan keluarga dengan input OCR dari screenshot struk atau nota.
 
-**Demo live:** https://keuangan-keluarga-opal.vercel.app
+> **Demo live:** https://keuangan-keluarga-opal.vercel.app
 
 > Login Google di demo dibatasi hanya untuk test user. Untuk mencoba tanpa daftar, klik tombol **"Coba Demo tanpa Login"** di halaman masuk.
 
@@ -51,9 +56,16 @@
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
    - `GEMINI_API_KEY` (dari aistudio.google.com/apikey)
-4. Jalankan migrasi SQL di folder `db/` secara berurutan (001 sampai 005) di SQL Editor Supabase.
+4. Jalankan migrasi SQL di folder `db/` secara berurutan (001 sampai 011) di SQL Editor Supabase.
 5. Aktifkan provider Google di Supabase Authentication (lihat dokumentasi Supabase).
 6. `npm run dev`, buka http://localhost:3000.
+
+**2. Tambahkan badge test** di paling atas README (setelah judul):
+
+Cari baris ini di README:
+
+````markdown
+# My Money Money
 
 ## Keputusan arsitektur dan keamanan
 
@@ -80,6 +92,7 @@ flowchart LR
     N -->|redirect OAuth| A[Google OAuth]
     A -->|callback| S
 ```
+````
 
 ### Relasi database (ERD)
 
@@ -140,11 +153,30 @@ db/
   003_seed_demo.sql
   004_ocr_logs.sql
   005_ocr_check_split.sql
+  006_expense_by_category.sql
+  007_monthly_trend.sql
+  008_profile_stats.sql
+  009_category_unique_case_insensitive.sql
+  010_budgets.sql
+  011_recurring_rules.sql
 docs/
   BLUEPRINT.md
 AGENTS.md
 .env.example
 proxy.ts
+components/
+  theme-provider.tsx
+  theme-toggle.tsx
+  expense-chart.tsx
+  trend-chart.tsx
+  budget-progress.tsx
+  today-transactions.tsx
+  service-worker-register.tsx
+app/
+  budget/
+  profil/
+  recurring/
+  ...
 ```
 
 ## Dokumentasi tambahan
