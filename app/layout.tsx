@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
@@ -17,6 +18,12 @@ export const metadata: Metadata = {
   title: "My Money Money",
   description:
     "Aplikasi pencatat keuangan keluarga dengan input OCR dari screenshot.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "My Money Money",
+  },
+  formatDetection: { telephone: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -27,7 +34,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ServiceWorkerRegister />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
