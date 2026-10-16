@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { BudgetProgress, type BudgetStatus } from "@/components/budget-progress";
 import { ExpenseChart } from "@/components/expense-chart";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TrendChart, type TrendDataPoint } from "@/components/trend-chart";
@@ -206,6 +207,20 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     trendErrorMessage = "Gagal memuat grafik tren. Silakan muat ulang halaman.";
   }
 
+  let budgetData: BudgetStatus[] = [];
+
+  try {
+    const { data, error: budgetError } = await supabase.rpc("budget_status", {
+      p_month: `${month}-01`,
+    });
+
+    if (!budgetError && Array.isArray(data)) {
+      budgetData = data as BudgetStatus[];
+    }
+  } catch {
+    budgetData = [];
+  }
+
   let expenseData: ExpenseCategory[] = [];
 
   try {
@@ -331,6 +346,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           months={trendMonths}
           error={trendErrorMessage}
         />
+        <BudgetProgress data={budgetData} />
 
         {hasNoTransactions && (
           <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm leading-6 text-muted-foreground shadow-[var(--shadow)]">
