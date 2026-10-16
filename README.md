@@ -48,6 +48,10 @@
 
 ![OCR](docs/screenshots/ocr.png)
 
+**Profil dengan statistik:**
+
+![Profil](docs/screenshots/profil.png)
+
 ## Menjalankan di lokal
 
 1. Clone repo dan `npm install`.
