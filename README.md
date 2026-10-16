@@ -17,7 +17,7 @@
 - Kategori pemasukan/pengeluaran (tambah, lihat, hapus)
 - Transaksi dengan format Rupiah (titik ribuan, koma desimal)
 - Ringkasan bulanan: pemasukan, pengeluaran, selisih
-- OCR: unggah screenshot struk, Gemini mengekstrak transaksinya, user konfirmasi dan edit sebelum simpan
+- OCR: unggah screenshot struk, Gemini mengekstrak transaksinya dengan fallback ke Groq kalau Gemini penuh, user konfirmasi dan edit sebelum simpan
 - Isolasi data per akun lewat Row Level Security
 - Batas OCR 10 kali per user per hari
 
@@ -27,7 +27,7 @@
 | -------- | ------------------------------------------------- |
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS |
 | Backend  | Supabase (Postgres, Auth, Row Level Security)     |
-| OCR      | Google Gemini 3.5 Flash                           |
+| OCR      | Google Gemini 3.5 Flash, fallback ke Groq (Llama 3.2 Vision) |
 | Hosting  | Vercel                                            |
 
 ## Screenshot
@@ -52,10 +52,11 @@
 
 1. Clone repo dan `npm install`.
 2. Buat project Supabase di supabase.com.
-3. Salin `.env.example` ke `.env.local`, isi tiga variabel:
+3. Salin `.env.example` ke `.env.local`, isi empat variabel:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
    - `GEMINI_API_KEY` (dari aistudio.google.com/apikey)
+   - `GROQ_API_KEY` (dari console.groq.com, opsional sebagai fallback OCR)
 4. Jalankan migrasi SQL di folder `db/` secara berurutan (001 sampai 011) di SQL Editor Supabase.
 5. Aktifkan provider Google di Supabase Authentication (lihat dokumentasi Supabase).
 6. `npm run dev`, buka http://localhost:3000.
