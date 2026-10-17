@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { EmptyState } from "@/components/empty-state";
 import type { TransactionCategory } from "@/app/transaksi/types";
 import {
   createRecurringRule,
@@ -14,7 +15,7 @@ import {
 const initialState: RecurringActionState = { error: null, success: false };
 const runInitialState: RunRecurringState = { error: null, created: null };
 const fieldClass =
-  "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "min-h-11 min-w-0 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function CreateRecurringForm({ categories }: { categories: TransactionCategory[] }) {
   const [formKey, setFormKey] = useState(0);
@@ -29,13 +30,24 @@ export function CreateRecurringForm({ categories }: { categories: TransactionCat
     initialState,
   );
 
+  if (categories.length === 0) {
+    return (
+      <EmptyState
+        title="Buat kategori terlebih dahulu"
+        description="Aturan berulang memerlukan kategori, misalnya Gaji atau Langganan."
+        href="/kategori#add-category-heading"
+        action="Tambah kategori"
+      />
+    );
+  }
+
   return (
-    <form key={formKey} action={formAction} className="grid gap-4 sm:grid-cols-2" aria-busy={pending}>
-      <div className="space-y-2">
+    <form key={formKey} action={formAction} className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2" aria-busy={pending}>
+      <div className="col-span-full min-w-0 space-y-2 sm:col-span-1">
         <label htmlFor="recurring-name" className="block text-sm font-semibold">Nama aturan</label>
         <input id="recurring-name" name="name" type="text" maxLength={50} required placeholder="Gaji bulanan" className={fieldClass} />
       </div>
-      <div className="space-y-2">
+      <div className="col-span-full min-w-0 space-y-2 sm:col-span-1">
         <label htmlFor="recurring-category" className="block text-sm font-semibold">Kategori</label>
         <select id="recurring-category" name="category_id" defaultValue="" required className={fieldClass}>
           <option value="" disabled>Pilih kategori</option>
@@ -51,33 +63,33 @@ export function CreateRecurringForm({ categories }: { categories: TransactionCat
           </optgroup>
         </select>
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor="recurring-amount" className="block text-sm font-semibold">Nominal (Rp)</label>
-        <input id="recurring-amount" name="amount" type="text" inputMode="decimal" required placeholder="500000 atau 500.000" className={fieldClass} />
+        <input id="recurring-amount" name="amount" type="text" inputMode="decimal" required placeholder="500.000" className={fieldClass} />
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor="recurring-day" className="block text-sm font-semibold">Tanggal setiap bulan</label>
         <input id="recurring-day" name="day_of_month" type="number" min={1} max={31} step={1} defaultValue={1} required className={fieldClass} />
       </div>
-      <div className="space-y-2 sm:col-span-2">
+      <div className="space-y-2 col-span-full">
         <label htmlFor="recurring-note" className="block text-sm font-semibold">Catatan (opsional)</label>
         <textarea id="recurring-note" name="note" maxLength={200} rows={3} className={fieldClass} />
       </div>
       {state.error && (
-        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
+        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger col-span-full">
           {state.error}
         </p>
       )}
       {state.success && !pending && (
-        <p role="status" className="rounded-xl bg-primary/10 px-3 py-2 text-sm text-primary sm:col-span-2">
+        <p role="status" className="rounded-xl bg-primary/10 px-3 py-2 text-sm text-primary col-span-full">
           Aturan ditambahkan.
         </p>
       )}
-      <div className="sm:col-span-2">
+      <div className="col-span-full">
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="min-h-11 w-full rounded-xl bg-primary sm:w-auto px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Menambahkan..." : "Tambah aturan"}
         </button>
@@ -92,7 +104,7 @@ export function RecurringActions({ id, isActive }: { id: string; isActive: boole
   const pending = togglePending || deletePending;
 
   return (
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2">
       <div className="flex flex-wrap gap-2">
         <form action={toggleAction} aria-busy={togglePending}>
           <input type="hidden" name="id" value={id} />
@@ -126,7 +138,7 @@ export function RunRecurringButton() {
   const [state, formAction, pending] = useActionState(runRecurringNow, runInitialState);
 
   return (
-    <form action={formAction} className="space-y-2" aria-busy={pending}>
+    <form action={formAction} className="min-w-0 space-y-2" aria-busy={pending}>
       <button
         type="submit"
         disabled={pending}

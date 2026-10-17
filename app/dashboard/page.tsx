@@ -1,3 +1,4 @@
+import { MonthNavigation } from "@/components/page-navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -271,15 +272,34 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
             </span>
             <div className="min-w-0">
               <p className="text-sm font-semibold">My Money Money</p>
-              <p className="break-all text-sm text-muted-foreground">
-                {user.email ? user.email : "Mode demo"}
-              </p>
+              <p className="text-xs text-muted-foreground">Catatan keuangan keluarga</p>
             </div>
           </div>
           <ThemeToggle />
         </div>
 
-        <nav aria-label="Menu utama" className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-6 border-t border-border pt-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-3xl font-semibold tracking-tight">Beranda</h1>
+            {(user.is_anonymous === true || !user.email) && (
+              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">Mode demo</span>
+            )}
+          </div>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Mulai dari satu catatan. Pantau pemasukan dan pengeluaranmu di sini.
+          </p>
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <Link href="/transaksi#add-transaction-heading" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              Catat transaksi
+            </Link>
+            <Link href="/transaksi#transactions-heading" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary">
+              Lihat riwayat
+            </Link>
+          </div>
+        </div>
+
+        <nav aria-label="Menu utama" className="hidden md:flex mt-5 flex-wrap gap-2">
           <Link
             href="/kategori"
             className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -296,7 +316,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
             href="/ocr"
             className="rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            OCR
+            Pindai struk
           </Link>
           <Link
             href="/profil"
@@ -319,38 +339,45 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </nav>
       </header>
 
+      <section aria-labelledby="manage-heading" className="md:hidden">
+        <details className="group overflow-hidden rounded-2xl border border-border bg-card">
+          <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2 [&::-webkit-details-marker]:hidden">
+            <span><span id="manage-heading" className="block text-sm font-semibold">Kelola keuangan</span><span className="mt-0.5 block text-xs text-muted-foreground">Kategori, budget &amp; transaksi berulang</span></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-180"><path d="m5 9 7 7 7-7" /></svg>
+          </summary>
+        <div className="divide-y divide-border border-t border-border">
+          {[
+            { href: "/kategori", label: "Kategori", description: "Kelompokkan catatanmu" },
+            { href: "/budget", label: "Budget bulanan", description: "Atur batas pengeluaran" },
+            { href: "/recurring", label: "Transaksi berulang", description: "Jadwalkan gaji dan tagihan" },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2">
+              <span><span className="block text-sm font-semibold">{item.label}</span><span className="mt-0.5 block text-xs text-muted-foreground">{item.description}</span></span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 text-muted-foreground"><path d="m9 5 7 7-7 7" /></svg>
+            </Link>
+          ))}
+        </div>
+        </details>
+      </section>
+
       <TodayTransactions data={todayData ?? []} />
 
       <section aria-labelledby="monthly-summary-heading" className="space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-3 px-1">
           <div>
-            <p className="text-sm font-semibold text-primary">Ikhtisar keuangan</p>
-            <h1 id="monthly-summary-heading" className="mt-1 text-3xl font-semibold tracking-tight">
-              Dashboard
-            </h1>
+            <h2 id="monthly-summary-heading" className="text-xl font-semibold tracking-tight">
+              Ringkasan bulanan
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">Pilih bulan untuk melihat catatan dan grafiknya.</p>
           </div>
         </div>
 
-        <nav
-          aria-label="Pilih bulan ringkasan"
-          className="grid grid-cols-1 items-center gap-2 rounded-[1.5rem] border border-border bg-muted p-2 text-sm sm:grid-cols-3"
-        >
-          <Link
-            href={`/dashboard?bulan=${previousMonth}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
-          >
-            Bulan sebelumnya
-          </Link>
-          <p className="rounded-xl bg-card px-3 py-2.5 text-center font-semibold shadow-sm">
-            {formatMonthId(month)}
-          </p>
-          <Link
-            href={`/dashboard?bulan=${nextMonth}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
-          >
-            Bulan berikutnya
-          </Link>
-        </nav>
+        <MonthNavigation
+          label="Pilih bulan ringkasan"
+          month={formatMonthId(month)}
+          previousHref={`/dashboard?bulan=${previousMonth}`}
+          nextHref={`/dashboard?bulan=${nextMonth}`}
+        />
 
         <a
           href={`/laporan?bulan=${month}`}
@@ -399,7 +426,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           type="submit"
           className="rounded-xl px-4 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
-          Keluar
+          {user.is_anonymous === true || !user.email ? "Keluar dari demo" : "Keluar dari akun"}
         </button>
       </form>
     </div>

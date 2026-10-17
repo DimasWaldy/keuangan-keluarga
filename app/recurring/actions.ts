@@ -16,8 +16,7 @@ export type RunRecurringState = {
   created: number | null;
 };
 
-function nextRunDate(dayOfMonth: number) {
-  const today = todayInJakarta();
+function nextRunDate(dayOfMonth: number, today = todayInJakarta()) {
   const month = today.slice(0, 7);
 
   function dateInMonth(value: string) {
@@ -121,21 +120,60 @@ export async function toggleRecurringRule(
   }
 
   try {
-    const { data, error } = await supabase
-      .from("recurring_rules")
-      .update({ is_active: rawActive === "true" })
-      .eq("id", id)
+    const isActive = rawActive === "true";
+    const updates: { is_active: boolean; next_run_date?: string } = {
+      is_active: isActive,
+    };
+    let previousRule: {
+      day_of_month: number;
+      next_run_date: string;
+      is_active: boolean;
+    } | null = null;
+
+    if (isActive) {
+      // Read the authoritative schedule through RLS, never from hidden inputs.
+      const { data: rule, error: ruleError } = await supabase
+        .from("recurring_rules")
+        .select("day_of_month,next_run_date,is_active")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (ruleError || !rule) {
+        return { error: "Aturan tidak ditemukan.", success: false };
+      }
+
+      previousRule = rule;
+      const today = todayInJakarta();
+
+      // Do not reset a rule that was already activated by another request.
+      if (!rule.is_active && rule.next_run_date < today) {
+        updates.next_run_date = nextRunDate(rule.day_of_month, today);
+      }
+    }
+
+    let query = supabase.from("recurring_rules").update(updates).eq("id", id);
+
+    if (previousRule) {
+      // Reject stale activation if a concurrent request changed the schedule.
+      query = query
+        .eq("is_active", previousRule.is_active)
+        .eq("next_run_date", previousRule.next_run_date)
+        .eq("day_of_month", previousRule.day_of_month);
+    }
+
+    const { data, error } = await query
       .select("id")
       .maybeSingle();
 
     if (error || !data) {
-      return { error: "Aturan tidak ditemukan.", success: false };
+      return { error: "Gagal mengubah aturan. Muat ulang halaman dan coba lagi.", success: false };
     }
   } catch {
     return { error: "Aturan tidak ditemukan.", success: false };
   }
 
   revalidatePath("/recurring");
+  revalidatePath("/dashboard");
   return { error: null, success: true };
 }
 

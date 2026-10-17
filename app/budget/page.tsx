@@ -1,5 +1,6 @@
+import { EmptyState } from "@/components/empty-state";
+import { BackToDashboard } from "@/components/page-navigation";
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import type { TransactionCategory } from "@/app/transaksi/types";
@@ -68,13 +69,8 @@ async function Budgets() {
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
       <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
-        <Link
-          href="/dashboard"
-          className="inline-flex rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Kembali ke dashboard
-        </Link>
-        <h1 className="mt-7 text-3xl font-semibold tracking-tight">Budget bulanan</h1>
+        <BackToDashboard />
+        <h1 className="mt-5 text-3xl font-semibold tracking-tight">Budget bulanan</h1>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Set batas pengeluaran per kategori. Progress muncul di dashboard.
         </p>
@@ -102,9 +98,12 @@ async function Budgets() {
             Gagal memuat budget. Silakan coba lagi.
           </p>
         ) : budgets.length === 0 ? (
-          <p className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-            Belum ada budget. Tambah di atas.
-          </p>
+          <EmptyState
+            title="Belum ada budget"
+            description="Tentukan batas pengeluaran per kategori untuk memantau pemakaian bulanan."
+            href={categories.some((category) => category.type === "expense") ? "#set-budget-heading" : "/kategori"}
+            action={categories.some((category) => category.type === "expense") ? "Atur budget pertama" : "Buat kategori pengeluaran"}
+          />
         ) : (
           <ul className="space-y-3">
             {budgets.map((budget) => (

@@ -7,7 +7,7 @@ import { saveExtractedTransactions } from "./actions";
 import type { ExtractedTransaction, SaveOcrState } from "./types";
 
 const fieldClass =
-  "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60";
+  "min-h-11 min-w-0 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60";
 const initialSaveState: SaveOcrState = { error: null, successCount: null };
 
 type ConfirmItem = {
@@ -106,8 +106,8 @@ export function ConfirmForm({
               Simpan transaksi ini
             </label>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
+            <div className="mt-5 grid grid-cols-1 gap-4 min-[380px]:grid-cols-2">
+              <div className="min-w-0 space-y-2">
                 <label htmlFor={`${prefix}-amount`} className="block text-sm font-semibold">
                   Nominal (Rp)
                 </label>
@@ -118,7 +118,7 @@ export function ConfirmForm({
                   value={item.amount}
                   required
                   disabled={disabled}
-                  placeholder="50.000 atau 50.000,50"
+                  placeholder="50.000,50"
                   aria-describedby={`${prefix}-amount-help`}
                   className={fieldClass}
                   onChange={(event) => updateItem(index, { amount: event.target.value })}
@@ -128,7 +128,7 @@ export function ConfirmForm({
                 </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="min-w-0 space-y-2">
                 <label htmlFor={`${prefix}-date`} className="block text-sm font-semibold">
                   Tanggal
                 </label>
@@ -143,7 +143,7 @@ export function ConfirmForm({
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="col-span-full min-w-0 space-y-2">
                 <label htmlFor={`${prefix}-category`} className="block text-sm font-semibold">
                   Kategori
                 </label>
@@ -169,7 +169,7 @@ export function ConfirmForm({
                 </select>
               </div>
 
-              <div className="space-y-2">
+              <div className="col-span-full min-w-0 space-y-2">
                 <label htmlFor={`${prefix}-note`} className="block text-sm font-semibold">
                   Catatan (opsional)
                 </label>
@@ -197,7 +197,7 @@ export function ConfirmForm({
       <button
         type="submit"
         disabled={pending || selectedItems.length === 0 || saved}
-        className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+        className="min-h-11 w-full rounded-xl bg-primary sm:w-auto px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
       >
         {pending ? "Menyimpan..." : `Simpan ${selectedItems.length} transaksi`}
       </button>

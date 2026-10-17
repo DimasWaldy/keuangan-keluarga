@@ -93,6 +93,24 @@ body {
   .animate-fade-in-up { animation: fade-in-up 300ms ease-out; }
 }
 
+@media (max-width: 767px) {
+  /* Keep focused fields readable without triggering iOS input zoom. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  button,
+  select {
+    min-height: 44px;
+  }
+
+  h2[id] {
+    scroll-margin-top: 16px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -13,6 +13,7 @@ export function ThemeToggle() {
   }, []);
 
   const currentTheme = theme === "light" || theme === "dark" ? theme : "system";
+  const themeLabel = { system: "Sistem", light: "Terang", dark: "Gelap" }[currentTheme];
 
   function cycleTheme() {
     setTheme(
@@ -25,16 +26,18 @@ export function ThemeToggle() {
   }
 
   return (
-    <span aria-live="polite" className="inline-flex h-10 w-10 shrink-0">
+    <span aria-live="polite" className="inline-flex shrink-0">
       <button
         type="button"
         disabled={!mounted}
         aria-label={
-          mounted ? `Ganti tema (sekarang: ${currentTheme})` : "Ganti tema"
+          mounted ? `Ganti tema (sekarang: ${themeLabel})` : "Ganti tema"
         }
+        title={mounted ? `Tema ${themeLabel}. Klik untuk mengganti tema.` : "Ganti tema"}
         onClick={cycleTheme}
-        className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground shadow-[var(--shadow)] transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait"
+        className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2.5 text-xs font-medium text-muted-foreground transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait"
       >
+        <span className="flex h-[18px] w-[18px] items-center justify-center">
         {mounted && (
           <svg
             key={currentTheme}
@@ -65,9 +68,11 @@ export function ThemeToggle() {
             )}
           </svg>
         )}
+        </span>
+        <span>Tema</span>
       </button>
       {mounted && (
-        <span className="sr-only">Tema sekarang: {currentTheme}</span>
+        <span className="sr-only">Tema sekarang: {themeLabel}</span>
       )}
     </span>
   );

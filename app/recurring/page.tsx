@@ -1,5 +1,6 @@
+import { EmptyState } from "@/components/empty-state";
+import { BackToDashboard } from "@/components/page-navigation";
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import type { TransactionCategory } from "@/app/transaksi/types";
@@ -82,10 +83,8 @@ async function Recurring() {
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
       <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
-        <Link href="/dashboard" className="inline-flex rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Kembali ke dashboard
-        </Link>
-        <h1 className="mt-7 text-3xl font-semibold tracking-tight">Transaksi berulang</h1>
+        <BackToDashboard />
+        <h1 className="mt-5 text-3xl font-semibold tracking-tight">Transaksi berulang</h1>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Buat aturan transaksi bulanan seperti gaji atau langganan. Aturan dijalankan otomatis saat kamu buka dashboard, atau klik tombol di bawah untuk menjalankan yang jatuh tempo sekarang.
         </p>
@@ -112,9 +111,12 @@ async function Recurring() {
             Gagal memuat aturan berulang. Silakan coba lagi.
           </p>
         ) : rules.length === 0 ? (
-          <p className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-            Belum ada aturan berulang.
-          </p>
+          <EmptyState
+            title="Belum ada transaksi berulang"
+            description="Buat jadwal untuk catatan rutin, seperti gaji atau langganan bulanan."
+            href={categories.length === 0 ? "/kategori" : "#create-recurring-heading"}
+            action={categories.length === 0 ? "Buat kategori dulu" : "Buat aturan pertama"}
+          />
         ) : (
           <ul className="space-y-3">
             {rules.map((rule) => (

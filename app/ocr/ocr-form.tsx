@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { EmptyState } from "@/components/empty-state";
 import type { TransactionCategory } from "@/app/transaksi/types";
 import { extractTransactions } from "./actions";
 import { ConfirmForm } from "./confirm-form";
@@ -45,9 +46,9 @@ export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="mt-5 min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="mt-5 min-h-11 w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60 sm:w-auto"
         >
-          {pending ? "Memproses..." : "Ekstrak dengan Gemini"}
+          {pending ? "Memindai struk..." : "Pindai struk"}
         </button>
       </form>
 
@@ -72,9 +73,12 @@ export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
       )}
 
       {state.transactions?.length === 0 && !state.error && (
-        <p className="rounded-2xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground shadow-[var(--shadow)]">
-          Tidak ada transaksi yang bisa dibaca dari gambar ini.
-        </p>
+        <EmptyState
+          title="Struk belum terbaca"
+          description="Coba foto yang lebih terang dan pastikan seluruh nominal terlihat."
+          href="#ocr-image"
+          action="Pilih gambar lain"
+        />
       )}
 
       {state.raw && (

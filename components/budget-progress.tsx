@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/empty-state";
 import Link from "next/link";
 
 export type BudgetStatus = {
@@ -66,13 +67,12 @@ function BudgetBar(item: BudgetStatus) {
 export function BudgetProgress({ data }: { data: BudgetStatus[] }) {
   if (data.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
-        Belum ada budget. Set di halaman{" "}
-        <Link href="/budget" className="font-medium text-primary underline underline-offset-4">
-          Budget
-        </Link>
-        .
-      </p>
+      <EmptyState
+        title="Belum ada budget"
+        description="Atur batas pengeluaran per kategori. Pemakaiannya akan terlihat di sini."
+        href="/budget"
+        action="Atur budget"
+      />
     );
   }
 

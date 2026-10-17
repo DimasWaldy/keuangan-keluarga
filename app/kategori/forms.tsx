@@ -9,14 +9,14 @@ import {
 
 const initialState: CategoryActionState = { error: null };
 const fieldClass =
-  "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "min-h-11 min-w-0 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function AddCategoryForm() {
   const [state, formAction, pending] = useActionState(addCategory, initialState);
 
   return (
-    <form action={formAction} className="grid gap-4 sm:grid-cols-2" aria-busy={pending}>
-      <div className="space-y-2">
+    <form action={formAction} className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2" aria-busy={pending}>
+      <div className="min-w-0 space-y-2">
         <label htmlFor="category-name" className="block text-sm font-semibold">
           Nama kategori
         </label>
@@ -30,7 +30,7 @@ export function AddCategoryForm() {
           className={fieldClass}
         />
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor="category-type" className="block text-sm font-semibold">
           Jenis
         </label>
@@ -49,16 +49,16 @@ export function AddCategoryForm() {
         <p
           id="add-category-error"
           role="alert"
-          className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2"
+          className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger col-span-full"
         >
           {state.error}
         </p>
       )}
-      <div className="sm:col-span-2">
+      <div className="col-span-full">
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="min-h-11 w-full rounded-xl bg-primary sm:w-auto px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Menambahkan..." : "Tambah kategori"}
         </button>

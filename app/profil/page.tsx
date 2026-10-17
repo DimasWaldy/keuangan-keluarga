@@ -1,5 +1,5 @@
+import { BackToDashboard } from "@/components/page-navigation";
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
@@ -75,12 +75,7 @@ async function Profile() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 text-foreground">
-      <Link
-        href="/dashboard"
-        className="inline-flex rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        Kembali ke dashboard
-      </Link>
+      <BackToDashboard />
 
       <header className="rounded-xl border border-border bg-card p-6">
         <h1 className="mb-5 text-2xl font-semibold tracking-tight">Profil</h1>

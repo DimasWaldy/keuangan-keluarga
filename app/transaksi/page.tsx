@@ -1,3 +1,5 @@
+import { EmptyState } from "@/components/empty-state";
+import { BackToDashboard, MonthNavigation } from "@/components/page-navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -106,20 +108,19 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
         <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/dashboard"
-            className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Kembali ke dashboard
-          </Link>
+          <BackToDashboard />
           <ThemeToggle />
         </div>
-        <div className="mt-7">
+        <div className="mt-5 sm:mt-7">
           <p className="text-sm font-semibold text-primary">Catatan keluarga</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Transaksi</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
             Catat pemasukan dan pengeluaran, lalu lihat riwayatnya dalam satu tempat.
           </p>
+          <nav aria-label="Bagian halaman transaksi" className="mt-4 grid grid-cols-2 gap-2 text-center text-sm">
+            <a href="#add-transaction-heading" className="flex min-h-11 items-center justify-center rounded-xl bg-primary/10 px-3 font-semibold text-primary focus-visible:outline-2 focus-visible:outline-primary">Catat baru</a>
+            <a href="#transactions-heading" className="flex min-h-11 items-center justify-center rounded-xl border border-border px-3 font-medium transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary">Lihat riwayat</a>
+          </nav>
         </div>
       </header>
 
@@ -196,64 +197,23 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
             Cari
           </button>
         </form>
-        <nav
-          aria-label="Pilih bulan transaksi"
-          className="grid grid-cols-1 items-center gap-2 rounded-[1.5rem] border border-border bg-muted p-2 text-sm sm:grid-cols-3"
-        >
-          <Link
-            href={`/transaksi?bulan=${previousMonth}${searchQuery}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-left"
-          >
-            Bulan sebelumnya
-          </Link>
-          <p className="rounded-xl bg-card px-3 py-2.5 text-center font-semibold text-foreground shadow-sm">
-            {formatMonthId(bulan)}
-          </p>
-          <Link
-            href={`/transaksi?bulan=${nextMonth}${searchQuery}`}
-            className="rounded-xl px-3 py-2.5 text-center font-medium text-primary transition-colors duration-150 ease-in hover:ease-out hover:bg-card hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-right"
-          >
-            Bulan berikutnya
-          </Link>
-        </nav>
+        <MonthNavigation
+          label="Pilih bulan transaksi"
+          month={formatMonthId(bulan)}
+          previousHref={`/transaksi?bulan=${previousMonth}${searchQuery}`}
+          nextHref={`/transaksi?bulan=${nextMonth}${searchQuery}`}
+        />
         {transactionError ? (
           <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
             Gagal memuat transaksi. Silakan coba lagi.
           </p>
         ) : items.length === 0 ? (
-          <p className="rounded-[1.5rem] border border-border bg-card px-5 py-4 text-sm text-muted-foreground shadow-[var(--shadow)]">
-            {page === 1 && q ? (
-              <>
-                Tidak ada transaksi yang cocok dengan pencarian &quot;{q}&quot; di bulan ini.{" "}
-                <Link
-                  href={`/transaksi?bulan=${bulan}`}
-                  className="font-semibold text-primary underline underline-offset-4"
-                >
-                  Hapus pencarian
-                </Link>
-              </>
-            ) : page === 1 ? (
-              <>
-                Belum ada transaksi di bulan ini.{" "}
-                <Link
-                  href="/transaksi"
-                  className="font-semibold text-primary underline underline-offset-4"
-                >
-                  Lihat semua transaksi
-                </Link>{" "}
-                atau{" "}
-                <a
-                  href="#add-transaction-heading"
-                  className="font-semibold text-primary underline underline-offset-4"
-                >
-                  tambah transaksi baru
-                </a>
-                .
-              </>
-            ) : (
-              "Tidak ada transaksi di halaman ini."
-            )}
-          </p>
+          <EmptyState
+            title={page > 1 ? "Tidak ada transaksi di halaman ini" : q ? "Pencarian belum menemukan hasil" : "Belum ada transaksi di bulan ini"}
+            description={page > 1 ? "Kembali ke halaman pertama untuk melihat catatan pada bulan ini." : q ? `Tidak ada catatan yang cocok dengan “${q}” di bulan ini. Coba hapus pencarian atau pilih bulan lain.` : "Catat pemasukan atau pengeluaran, atau pilih bulan lain untuk melihat riwayat."}
+            href={page > 1 ? `/transaksi?bulan=${bulan}${searchQuery}` : q ? `/transaksi?bulan=${bulan}` : categories.length === 0 ? "/kategori" : "#add-transaction-heading"}
+            action={page > 1 ? "Ke halaman pertama" : q ? "Hapus pencarian" : categories.length === 0 ? "Buat kategori dulu" : "Tambah transaksi"}
+          />
         ) : (
           <ul className="overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[var(--shadow)]">
             {items.map((transaction) => {

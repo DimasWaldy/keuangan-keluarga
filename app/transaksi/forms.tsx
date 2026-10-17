@@ -12,7 +12,7 @@ import type { TransactionActionState, TransactionCategory } from "./types";
 const initialState: TransactionActionState = { error: null };
 const editInitialState: UpdateTransactionState = { error: null };
 const fieldClass =
-  "min-h-11 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "min-h-11 min-w-0 w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function AddTransactionForm({
   categories,
@@ -24,8 +24,8 @@ export function AddTransactionForm({
   const [state, formAction, pending] = useActionState(addTransaction, initialState);
 
   return (
-    <form action={formAction} className="grid gap-4 sm:grid-cols-2" aria-busy={pending}>
-      <div className="space-y-2">
+    <form action={formAction} className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2" aria-busy={pending}>
+      <div className="col-span-full min-w-0 space-y-2">
         <label htmlFor="transaction-category" className="block text-sm font-semibold">
           Kategori
         </label>
@@ -59,7 +59,7 @@ export function AddTransactionForm({
           </optgroup>
         </select>
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor="transaction-amount" className="block text-sm font-semibold">
           Nominal (Rp)
         </label>
@@ -69,7 +69,7 @@ export function AddTransactionForm({
           type="text"
           inputMode="decimal"
           required
-          placeholder="50.000 atau 50.000,50"
+          placeholder="50.000,50"
           aria-describedby="transaction-amount-help"
           className={fieldClass}
         />
@@ -77,7 +77,7 @@ export function AddTransactionForm({
           Titik untuk ribuan, koma untuk desimal. Contoh: 15000, 15.000, atau 15.000,50.
         </p>
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor="transaction-date" className="block text-sm font-semibold">
           Tanggal
         </label>
@@ -90,7 +90,7 @@ export function AddTransactionForm({
           className={fieldClass}
         />
       </div>
-      <div className="space-y-2">
+      <div className="col-span-full min-w-0 space-y-2">
         <label htmlFor="transaction-note" className="block text-sm font-semibold">
           Catatan (opsional)
         </label>
@@ -103,15 +103,15 @@ export function AddTransactionForm({
         />
       </div>
       {state.error && (
-        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
+        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger col-span-full">
           {state.error}
         </p>
       )}
-      <div className="sm:col-span-2">
+      <div className="col-span-full">
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+          className="min-h-11 w-full rounded-xl bg-primary sm:w-auto px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform duration-150 ease-out not-hover:ease-in hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
         >
           {pending ? "Menambahkan..." : "Tambah transaksi"}
         </button>
@@ -127,7 +127,7 @@ export function DeleteTransactionForm({ id }: { id: string }) {
   );
 
   return (
-    <form action={formAction} className="space-y-2" aria-busy={pending}>
+    <form action={formAction} className="min-w-0 space-y-2" aria-busy={pending}>
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
@@ -195,11 +195,11 @@ export function EditTransactionForm({
     <form
       action={formAction}
       onSubmit={() => setHasSubmitted(true)}
-      className="basis-full grid gap-4 rounded-2xl border border-border bg-muted/50 p-4 sm:grid-cols-2"
+      className="basis-full min-w-0 grid grid-cols-1 gap-4 rounded-2xl border border-border bg-muted/50 p-3 min-[380px]:grid-cols-2 sm:p-4"
       aria-busy={pending}
     >
       <input type="hidden" name="id" value={transaction.id} />
-      <div className="space-y-2">
+      <div className="col-span-full min-w-0 space-y-2">
         <label htmlFor={`${fieldId}-category`} className="block text-sm font-semibold">
           Kategori
         </label>
@@ -230,7 +230,7 @@ export function EditTransactionForm({
           </optgroup>
         </select>
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor={`${fieldId}-amount`} className="block text-sm font-semibold">
           Nominal (Rp)
         </label>
@@ -241,7 +241,7 @@ export function EditTransactionForm({
           inputMode="decimal"
           defaultValue={formatAmountForInput(transaction.amount)}
           required
-          placeholder="50.000 atau 50.000,50"
+          placeholder="50.000,50"
           aria-describedby={`${fieldId}-amount-help`}
           className={fieldClass}
         />
@@ -249,7 +249,7 @@ export function EditTransactionForm({
           Titik untuk ribuan, koma untuk desimal. Contoh: 15000, 15.000, atau 15.000,50.
         </p>
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         <label htmlFor={`${fieldId}-date`} className="block text-sm font-semibold">
           Tanggal
         </label>
@@ -262,7 +262,7 @@ export function EditTransactionForm({
           className={fieldClass}
         />
       </div>
-      <div className="space-y-2">
+      <div className="col-span-full min-w-0 space-y-2">
         <label htmlFor={`${fieldId}-note`} className="block text-sm font-semibold">
           Catatan (opsional)
         </label>
@@ -276,11 +276,11 @@ export function EditTransactionForm({
         />
       </div>
       {state.error && (
-        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger sm:col-span-2">
+        <p role="alert" className="animate-shake rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger col-span-full">
           {state.error}
         </p>
       )}
-      <div className="flex flex-wrap gap-2 sm:col-span-2">
+      <div className="grid grid-cols-2 gap-2 col-span-full sm:flex sm:flex-wrap">
         <button
           type="submit"
           disabled={pending}

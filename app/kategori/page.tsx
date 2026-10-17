@@ -1,5 +1,6 @@
+import { EmptyState } from "@/components/empty-state";
+import { BackToDashboard } from "@/components/page-navigation";
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -53,15 +54,10 @@ async function Categories() {
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
         <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/dashboard"
-            className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Kembali ke dashboard
-          </Link>
+          <BackToDashboard />
           <ThemeToggle />
         </div>
-        <div className="mt-7">
+        <div className="mt-5 sm:mt-7">
           <p className="text-sm font-semibold text-primary">Atur pencatatan</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Kategori</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -116,9 +112,14 @@ async function Categories() {
                   </span>
                 </div>
                 {items.length === 0 ? (
-                  <p className="mt-5 rounded-2xl bg-muted px-4 py-4 text-sm text-muted-foreground">
-                    Belum ada kategori.
-                  </p>
+                  <div className="mt-5">
+                    <EmptyState
+                      title={`Belum ada kategori ${group.title.toLowerCase()}`}
+                      description={group.type === "income" ? "Mulai dengan kategori seperti Gaji atau Bonus." : "Mulai dengan kategori seperti Makan atau Transportasi."}
+                      href="#add-category-heading"
+                      action="Tambah kategori"
+                    />
+                  </div>
                 ) : (
                   <ul className="mt-5 divide-y divide-border overflow-hidden rounded-2xl border border-border">
                     {items.map((category) => (

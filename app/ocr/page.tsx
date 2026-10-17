@@ -1,3 +1,4 @@
+import { BackToDashboard } from "@/components/page-navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -27,19 +28,14 @@ async function Ocr() {
       <div className="mx-auto w-full max-w-3xl space-y-6">
         <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
           <div className="flex items-center justify-between gap-4">
-            <Link
-              href="/dashboard"
-              className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              Kembali ke dashboard
-            </Link>
+            <BackToDashboard />
             <ThemeToggle />
           </div>
         </header>
         <section className="rounded-[2rem] border border-border bg-card p-6 shadow-[var(--shadow)] sm:p-8">
-          <p className="text-sm font-semibold text-primary">Fitur terlindungi</p>
+          <p className="text-sm font-semibold text-primary">Pindai struk</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-            OCR hanya untuk user login
+            Tersedia untuk akun Google
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
             Fitur OCR mengirim gambar ke layanan pihak ketiga dan hanya tersedia
@@ -48,18 +44,16 @@ async function Ocr() {
           </p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Link
-              href="/login"
+              href="/transaksi#add-transaction-heading"
               className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
             >
-              Masuk dengan Google
-            </Link>
-            <Link
-              href="/dashboard"
-              className="rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-            >
-              Kembali ke dashboard
+              Catat transaksi manual
             </Link>
           </div>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            Ingin memakai pemindai? Kembali ke beranda, pilih Keluar dari demo,
+            lalu masuk dengan akun Google.
+          </p>
         </section>
       </div>
     );
@@ -85,24 +79,26 @@ async function Ocr() {
     <div className="mx-auto w-full max-w-3xl space-y-6">
       <header className="rounded-[2rem] border border-border bg-card p-5 shadow-[var(--shadow)] sm:p-6">
         <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/dashboard"
-            className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-in hover:ease-out hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Kembali ke dashboard
-          </Link>
+          <BackToDashboard />
           <ThemeToggle />
         </div>
-        <div className="mt-7">
-          <p className="text-sm font-semibold text-primary">Input cerdas</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">OCR Transaksi</h1>
+        <div className="mt-5 sm:mt-7">
+          <p className="text-sm font-semibold text-primary">Catat dari foto</p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Pindai struk</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            OCR memakai Gemini dengan fallback ke Groq. Hasilnya akan ditampilkan
-            untuk dikonfirmasi sebelum disimpan.
+            Unggah foto atau screenshot struk. Periksa dan edit hasilnya sebelum
+            menyimpan sebagai transaksi.
           </p>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Unggah screenshot atau foto struk. Hasilnya akan ditampilkan untuk
-            dikonfirmasi sebelum disimpan.
+          <ol aria-label="Langkah pemindaian" className="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-medium">
+            {["Unggah foto", "Periksa hasil", "Simpan"].map((step, index) => (
+              <li key={step} className="rounded-xl bg-muted px-2 py-3">
+                <span className="mx-auto mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-primary">{index + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            Gambar diproses oleh Gemini, dengan Groq sebagai layanan cadangan.
           </p>
         </div>
       </header>

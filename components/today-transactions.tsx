@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/empty-state";
 import Link from "next/link";
 
 export type TodayTransaction = {
@@ -34,10 +35,10 @@ export function TodayTransactions({ data }: { data: TodayTransaction[] }) {
 
   return (
     <section className="space-y-4 rounded-xl border border-border bg-card p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">Hari ini</h2>
-        <Link href="/transaksi" className="text-sm text-muted-foreground transition-colors hover:text-primary">
-          Lihat semua
+        <Link href="/transaksi#transactions-heading" className="inline-flex min-h-11 items-center text-sm font-medium text-primary transition-colors hover:underline">
+          Lihat riwayat
         </Link>
       </div>
 
@@ -54,14 +55,14 @@ export function TodayTransactions({ data }: { data: TodayTransaction[] }) {
 
       <ul className="divide-y divide-border">
         {data.slice(0, 5).map((transaction) => (
-          <li key={transaction.id} className="flex items-center justify-between gap-3 py-3">
-            <div className="min-w-0">
+          <li key={transaction.id} className="flex flex-col items-start gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+            <div className="min-w-0 max-w-full">
               <p className="truncate font-medium">{transaction.category?.name ?? "Tanpa kategori"}</p>
               {transaction.note && (
                 <p className="truncate text-xs text-muted-foreground">{transaction.note}</p>
               )}
             </div>
-            <p className={`shrink-0 font-medium tabular-nums ${transaction.category?.type === "income" ? "text-primary" : "text-foreground"}`}>
+            <p className={`max-w-full break-words text-sm font-medium tabular-nums sm:text-base ${transaction.category?.type === "income" ? "text-primary" : "text-foreground"}`}>
               {transaction.category?.type === "income" ? "+" : "−"}{formatRupiah(transaction.amount)}
             </p>
           </li>
@@ -75,9 +76,12 @@ export function TodayTransactions({ data }: { data: TodayTransaction[] }) {
       )}
 
       {data.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          Belum ada transaksi hari ini.
-        </p>
+        <EmptyState
+          title="Belum ada transaksi hari ini"
+          description="Mulai dari pemasukan atau pengeluaran pertamamu hari ini."
+          href="/transaksi#add-transaction-heading"
+          action="Catat transaksi"
+        />
       )}
     </section>
   );
