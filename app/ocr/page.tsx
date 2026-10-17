@@ -8,6 +8,8 @@ import type { TransactionCategory } from "@/app/transaksi/types";
 import { createClient } from "@/utils/supabase/server";
 import { OcrForm } from "./ocr-form";
 
+export const maxDuration = 60;
+
 async function Ocr() {
   await connection();
 
