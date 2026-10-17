@@ -1,7 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { parseMonth, shiftMonth, todayInJakarta } from "@/utils/date";
 
-export async function GET() {
+type ExportTransaction = {
+  occurred_on: string;
+  amount: string | number;
+  note: string | null;
+  category: { name: string; type: string } | null;
+};
+
+export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -12,58 +20,92 @@ export async function GET() {
     return new NextResponse("Harus login terlebih dahulu.", { status: 401 });
   }
 
-  const { data, error } = await supabase
-    .from("transactions")
-    .select("occurred_on, amount, note, category:categories(name, type)")
-    .order("occurred_on", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(10000);
+  const rawMonth = request.nextUrl.searchParams.get("bulan");
+  const bulan = parseMonth(rawMonth);
 
-  if (error) {
-    return new NextResponse("Gagal mengambil data transaksi.", { status: 500 });
+  if (rawMonth !== null && !bulan) {
+    return new NextResponse("Bulan tidak valid. Gunakan format YYYY-MM.", {
+      status: 400,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 
-  const rows = (data ?? []) as unknown as Array<{
-    occurred_on: string;
-    amount: string | number;
-    note: string | null;
-    category: { name: string; type: string } | null;
-  }>;
+  const q = request.nextUrl.searchParams.get("q")?.trim().slice(0, 100) ?? "";
+  const escapedSearch = q.replace(/[%_\\]/g, "\\$&");
+  const pageSize = 1000;
 
   const header = ["tanggal", "kategori", "jenis", "nominal", "catatan"];
-  const escapeCsv = (value: string | null) => {
+  function sanitizeCsvField(value: string | null): string {
     if (value === null || value === undefined) return "";
-    const str = String(value);
+    let str = String(value);
 
-    // CSV escape: kalau ada koma, kutip, atau newline, bungkus dengan "
-    // dan dobel-kan kutip di dalamnya.
-    if (/[";\n\r]/.test(str)) {
-      return `"${str.replace(/"/g, '""')}"`;
+    // Formula injection protection: prefix apostrophe.
+    const dangerous = /^[=+\-@\t\r]/.test(str);
+    if (dangerous) {
+      str = "'" + str;
+    }
+
+    // Quote special characters and every apostrophe-prefixed field.
+    if (dangerous || /[";\n\r]/.test(str)) {
+      str = `"${str.replace(/"/g, '""')}"`;
     }
 
     return str;
-  };
+  }
 
   const lines = [header.join(";")];
 
-  for (const row of rows) {
-    const jenis = row.category?.type === "income" ? "Pemasukan" : "Pengeluaran";
-    const nominal = String(row.amount);
+  try {
+    for (let offset = 0; ; offset += pageSize) {
+      let query = supabase
+        .from("transactions")
+        .select("occurred_on, amount, note, category:categories(name, type)");
 
-    lines.push(
-      [
-        row.occurred_on,
-        escapeCsv(row.category?.name ?? ""),
-        jenis,
-        nominal,
-        escapeCsv(row.note),
-      ].join(";"),
-    );
+      if (bulan) {
+        query = query
+          .gte("occurred_on", `${bulan}-01`)
+          .lt("occurred_on", `${shiftMonth(bulan, 1)}-01`);
+      }
+
+      if (q) {
+        query = query.ilike("note", `%${escapedSearch}%`);
+      }
+
+      const { data, error } = await query
+        .order("occurred_on", { ascending: false })
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(offset, offset + pageSize - 1)
+        .overrideTypes<ExportTransaction[], { merge: false }>();
+
+      if (error) {
+        throw new Error("Transaction export failed");
+      }
+
+      const rows = data ?? [];
+
+      for (const row of rows) {
+        lines.push([
+          row.occurred_on,
+          sanitizeCsvField(row.category?.name ?? ""),
+          row.category?.type === "income" ? "Pemasukan" : "Pengeluaran",
+          String(row.amount),
+          sanitizeCsvField(row.note),
+        ].join(";"));
+      }
+
+      if (rows.length < pageSize) break;
+    }
+  } catch {
+    return new NextResponse("Gagal mengambil data transaksi.", {
+      status: 500,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 
   // BOM di awal supaya Excel (khususnya versi Windows) baca UTF-8 dengan benar.
   const csv = "\uFEFF" + lines.join("\r\n");
-  const date = new Date().toISOString().slice(0, 10);
+  const date = todayInJakarta();
 
   return new NextResponse(csv, {
     status: 200,

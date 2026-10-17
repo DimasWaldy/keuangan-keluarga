@@ -159,7 +159,7 @@ async function Transactions({ searchParams }: { searchParams: SearchParams }) {
           </h2>
         </div>
         <a
-          href="/transaksi/export"
+          href={`/transaksi/export?bulan=${bulan}${searchQuery}`}
           download
           className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-card hover:border-primary"
         >
