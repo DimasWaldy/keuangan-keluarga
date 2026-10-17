@@ -9,6 +9,7 @@ export type OcrActionState = {
   error: string | null;
   transactions: ExtractedTransaction[] | null;
   raw: string | null;
+  discardedCount: number | null;
 };
 
 export type SaveOcrState = {

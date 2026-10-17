@@ -20,7 +20,7 @@ function parseNullableText(
 
 export function parseExtractedTransactions(
   data: unknown,
-): ExtractedTransaction[] | null {
+): { transactions: ExtractedTransaction[]; discarded: number } | null {
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     return null;
   }
@@ -32,9 +32,11 @@ export function parseExtractedTransactions(
   }
 
   const parsed: ExtractedTransaction[] = [];
+  let discarded = 0;
 
   for (const item of transactions.slice(0, 20)) {
     if (!item || typeof item !== "object" || Array.isArray(item)) {
+      discarded += 1;
       continue;
     }
 
@@ -48,6 +50,7 @@ export function parseExtractedTransactions(
       !/[1-9]/.test(amount.replace(".", "")) ||
       !isValidDate(occurredOn)
     ) {
+      discarded += 1;
       continue;
     }
 
@@ -55,6 +58,7 @@ export function parseExtractedTransactions(
     const categoryHint = parseNullableText(transaction.category_hint, 50);
 
     if (!note.valid || !categoryHint.valid) {
+      discarded += 1;
       continue;
     }
 
@@ -66,5 +70,5 @@ export function parseExtractedTransactions(
     });
   }
 
-  return parsed.length > 0 ? parsed : null;
+  return parsed.length > 0 ? { transactions: parsed, discarded } : null;
 }

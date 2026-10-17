@@ -1,15 +1,6 @@
 import "server-only";
 
-const prompt = `Ekstrak transaksi keuangan dari gambar ini. Balas JSON sesuai skema.
-Aturan:
-- amount: angka positif dalam format string desimal, tanpa pemisah ribuan,
-  titik sebagai desimal. Contoh: "15000.00".
-- occurred_on: format YYYY-MM-DD. Kalau tidak ada tanggal di gambar, pakai
-  tanggal hari ini (Asia/Jakarta).
-- note: maksimal 200 karakter, ringkas, Bahasa Indonesia.
-- category_hint: satu kata atau frasa pendek Bahasa Indonesia untuk kategori
-  (mis "Makan", "Transportasi", "Gaji"). Boleh null.
-- Kalau tidak ada transaksi yang bisa diekstrak, kembalikan array kosong.`;
+import { todayInJakarta } from "@/utils/date";
 
 const responseSchema = {
   type: "object",
@@ -77,6 +68,8 @@ function getResponseText(data: unknown): string | null {
 async function extractViaGemini(
   imageBase64: string,
   mimeType: string,
+  prompt: string,
+  overallSignal: AbortSignal,
 ): Promise<ExtractionResult> {
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -89,10 +82,12 @@ async function extractViaGemini(
 
   try {
     do {
+      overallSignal.throwIfAborted();
       response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
         {
           method: "POST",
+          signal: AbortSignal.any([AbortSignal.timeout(15000), overallSignal]),
           headers: {
             "Content-Type": "application/json",
             "x-goog-api-key": apiKey,
@@ -156,6 +151,8 @@ async function extractViaGemini(
 async function extractViaGroq(
   imageBase64: string,
   mimeType: string,
+  prompt: string,
+  overallSignal: AbortSignal,
 ): Promise<ExtractionResult> {
   const apiKey = process.env.GROQ_API_KEY;
 
@@ -166,8 +163,10 @@ async function extractViaGroq(
   let response: Response;
 
   try {
+    overallSignal.throwIfAborted();
     response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
+      signal: AbortSignal.any([AbortSignal.timeout(15000), overallSignal]),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
@@ -232,14 +231,25 @@ export async function extractTransactionsFromImage(
   imageBase64: string,
   mimeType: string,
 ): Promise<ExtractionResult> {
-  const geminiResult = await extractViaGemini(imageBase64, mimeType);
+  const today = todayInJakarta();
+  const prompt = `Ekstrak transaksi keuangan dari gambar ini. Balas JSON sesuai skema.
+Aturan:
+- amount: angka positif dalam format string desimal, tanpa pemisah ribuan, titik sebagai desimal.
+- occurred_on: format YYYY-MM-DD. Kalau tidak ada tanggal di gambar, pakai
+  tanggal hari ini yaitu ${today} (Asia/Jakarta).
+- note: maksimal 200 karakter, ringkas, Bahasa Indonesia.
+- category_hint: satu kata atau frasa pendek Bahasa Indonesia.
+- Kalau tidak ada transaksi yang bisa diekstrak, kembalikan array kosong.`;
+  // Three Gemini attempts plus Groq could take 64s; leave time for quota release.
+  const overallSignal = AbortSignal.timeout(50000);
+  const geminiResult = await extractViaGemini(imageBase64, mimeType, prompt, overallSignal);
 
   if (geminiResult.ok) {
     return geminiResult;
   }
 
   console.warn("[ocr] Gemini gagal, fallback ke Groq");
-  const groqResult = await extractViaGroq(imageBase64, mimeType);
+  const groqResult = await extractViaGroq(imageBase64, mimeType, prompt, overallSignal);
 
   if (groqResult.ok) {
     console.info("[ocr] Groq berhasil");

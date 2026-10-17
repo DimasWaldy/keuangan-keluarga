@@ -11,7 +11,7 @@ const validTransaction = {
 describe("parseExtractedTransactions", () => {
   it("mengembalikan satu transaksi valid", () => {
     expect(parseExtractedTransactions({ transactions: [validTransaction] }))
-      .toEqual([validTransaction]);
+      .toEqual({ transactions: [validTransaction], discarded: 0 });
   });
 
   it.each([
@@ -25,9 +25,10 @@ describe("parseExtractedTransactions", () => {
       ...optional,
     };
 
-    expect(parseExtractedTransactions({ transactions: [transaction] })).toEqual([
-      { amount: "15000.00", occurred_on: "2026-10-15", note: null, category_hint: null },
-    ]);
+    expect(parseExtractedTransactions({ transactions: [transaction] })).toEqual({
+      transactions: [{ amount: "15000.00", occurred_on: "2026-10-15", note: null, category_hint: null }],
+      discarded: 0,
+    });
   });
 
   it("hanya mengembalikan 20 transaksi pertama dari 25 transaksi", () => {
@@ -36,7 +37,7 @@ describe("parseExtractedTransactions", () => {
       note: `Transaksi ${index + 1}`,
     }));
 
-    expect(parseExtractedTransactions({ transactions })).toEqual(transactions.slice(0, 20));
+    expect(parseExtractedTransactions({ transactions })).toEqual({ transactions: transactions.slice(0, 20), discarded: 0 });
   });
 
   it.each([
@@ -67,7 +68,7 @@ describe("parseExtractedTransactions", () => {
     { label: "object kosong", item: {} },
   ])("membuang item $label dan mempertahankan item valid", ({ item }) => {
     expect(parseExtractedTransactions({ transactions: [item, validTransaction] }))
-      .toEqual([validTransaction]);
+      .toEqual({ transactions: [validTransaction], discarded: 1 });
   });
 
   it("mengembalikan null kalau semua item invalid", () => {
@@ -89,18 +90,35 @@ describe("parseExtractedTransactions", () => {
   it.each(["15000", "15000.5"])("menerima amount %s tanpa mengubah string", (amount) => {
     expect(parseExtractedTransactions({
       transactions: [{ ...validTransaction, amount }],
-    })).toEqual([{ ...validTransaction, amount }]);
+    })).toEqual({ transactions: [{ ...validTransaction, amount }], discarded: 0 });
   });
 
   it("memotong note menjadi maksimal 200 karakter", () => {
     expect(parseExtractedTransactions({
       transactions: [{ ...validTransaction, note: "a".repeat(250) }],
-    })).toEqual([{ ...validTransaction, note: "a".repeat(200) }]);
+    })).toEqual({ transactions: [{ ...validTransaction, note: "a".repeat(200) }], discarded: 0 });
   });
 
   it("memotong category_hint menjadi maksimal 50 karakter", () => {
     expect(parseExtractedTransactions({
       transactions: [{ ...validTransaction, category_hint: "a".repeat(100) }],
-    })).toEqual([{ ...validTransaction, category_hint: "a".repeat(50) }]);
+    })).toEqual({ transactions: [{ ...validTransaction, category_hint: "a".repeat(50) }], discarded: 0 });
+  });
+
+  it("menghitung semua item invalid dalam campuran hasil", () => {
+    expect(parseExtractedTransactions({ transactions: [
+      validTransaction, null, {},
+      { ...validTransaction, amount: "0.00" },
+      { ...validTransaction, note: 123 },
+      { ...validTransaction, category_hint: false },
+      validTransaction,
+    ] })).toEqual({ transactions: [validTransaction, validTransaction], discarded: 5 });
+  });
+
+  it("menghitung item invalid hanya dalam 20 item yang diproses", () => {
+    const transactions = [null, ...Array.from({ length: 24 }, () => validTransaction)];
+    expect(parseExtractedTransactions({ transactions })).toEqual({
+      transactions: transactions.slice(1, 20), discarded: 1,
+    });
   });
 });

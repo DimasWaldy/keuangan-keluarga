@@ -20,6 +20,7 @@ type OcrQuota = {
   allowed: boolean;
   used: number;
   daily_limit: number;
+  log_id: string | null;
 };
 
 function isOcrQuota(value: unknown): value is OcrQuota {
@@ -32,12 +33,13 @@ function isOcrQuota(value: unknown): value is OcrQuota {
   return (
     typeof quota.allowed === "boolean" &&
     Number.isInteger(quota.used) &&
-    Number.isInteger(quota.daily_limit)
+    Number.isInteger(quota.daily_limit) &&
+    (quota.allowed ? isUuid(quota.log_id) : quota.log_id === null)
   );
 }
 
 function errorState(error: string, raw: string | null = null): OcrActionState {
-  return { error, transactions: null, raw };
+  return { error, transactions: null, raw, discardedCount: null };
 }
 
 export async function extractTransactions(
@@ -75,7 +77,7 @@ export async function extractTransactions(
   let quota: OcrQuota;
 
   try {
-    const { data, error } = await supabase.rpc("ocr_check");
+    const { data, error } = await supabase.rpc("ocr_reserve");
     const firstRow = Array.isArray(data) ? data[0] : null;
 
     if (error || !isOcrQuota(firstRow)) {
@@ -93,40 +95,44 @@ export async function extractTransactions(
     );
   }
 
-  let result: Awaited<ReturnType<typeof extractTransactionsFromImage>>;
+  async function releaseReservation() {
+    try {
+      await supabase.rpc("ocr_release", { p_log_id: quota.log_id });
+    } catch {
+      // Best effort: failure to release must not hide the original OCR error.
+    }
+  }
 
   try {
     const imageBase64 = Buffer.from(await image.arrayBuffer()).toString("base64");
-    result = await extractTransactionsFromImage(imageBase64, image.type);
-  } catch {
-    return errorState("Gagal memproses gambar. Coba lagi.");
-  }
+    const result = await extractTransactionsFromImage(imageBase64, image.type);
 
-  if (!result.ok) {
-    return errorState("Gagal memproses gambar. Coba lagi.");
-  }
-
-  const raw = JSON.stringify(result.data).slice(0, 2000);
-  const transactions = parseExtractedTransactions(result.data);
-
-  if (!transactions) {
-    return errorState(
-      "Tidak ada transaksi yang bisa dibaca dari gambar ini.",
-      raw,
-    );
-  }
-
-  try {
-    const { error } = await supabase.rpc("ocr_log");
-
-    if (error) {
-      console.warn("[ocr] gagal mencatat log", error);
+    if (!result.ok) {
+      await releaseReservation();
+      return errorState("Gagal memproses gambar. Coba lagi.");
     }
-  } catch (error) {
-    console.warn("[ocr] gagal mencatat log", error);
-  }
 
-  return { error: null, transactions, raw };
+    const raw = (JSON.stringify(result.data) ?? "").slice(0, 2000);
+    const parsed = parseExtractedTransactions(result.data);
+
+    if (!parsed || parsed.transactions.length === 0) {
+      await releaseReservation();
+      return errorState(
+        "Tidak ada transaksi yang bisa dibaca dari gambar ini.",
+        raw,
+      );
+    }
+
+    return {
+      error: null,
+      transactions: parsed.transactions,
+      raw,
+      discardedCount: parsed.discarded,
+    };
+  } catch {
+    await releaseReservation();
+    return errorState("Gagal memproses gambar. Coba lagi.");
+  }
 }
 
 export async function saveExtractedTransactions(

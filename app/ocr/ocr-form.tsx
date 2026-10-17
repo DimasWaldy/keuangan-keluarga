@@ -11,6 +11,7 @@ const initialState: OcrActionState = {
   error: null,
   transactions: null,
   raw: null,
+  discardedCount: null,
 };
 
 export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
@@ -68,6 +69,11 @@ export function OcrForm({ categories }: { categories: TransactionCategory[] }) {
               Transaksi ditemukan. Periksa dulu sebelum disimpan.
             </p>
           </div>
+          {state.discardedCount !== null && state.discardedCount > 0 && (
+            <p role="status" className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-300">
+              Beberapa transaksi tidak bisa dibaca dan dilewati ({state.discardedCount} item).
+            </p>
+          )}
           <ConfirmForm transactions={state.transactions} categories={categories} />
         </section>
       )}
